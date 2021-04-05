@@ -5,7 +5,7 @@
                 <span class="app-title">-tributor</span>
             </div>
             <div class="control-buttons">
-                <NuxtLink to="/register">
+                <NuxtLink to="/resister">
                     <button type="button">新規作成</button>
                 </NuxtLink>
                 <NuxtLink to="/login">
