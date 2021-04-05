@@ -1,39 +1,37 @@
 <template>
-    <div class="toppage-wrapper">
         <div class="container">
             <div class="title-wrapper">
                 <span class="app-title">-tributor</span>
             </div>
             <div class="control-buttons">
-                <NuxtLink to="/resister">
-                    <button type="button">新規作成</button>
-                </NuxtLink>
-                <NuxtLink to="/login">
-                    <button type="button">ログイン</button>
-                </NuxtLink>
+                    <v-btn
+                      elevation="2"
+                    　to="/register" nuxt
+                    >新規登録</v-btn>
+
+                    <v-btn
+                      elevation="2"
+                    to="/login"
+                    >ログイン</v-btn>
             </div>
         </div>
-    </div>
 </template>
 
 <script>
+    //import wave from '~/components/wave.vue'
     export default {
+        middleware: 'logined_user',
+        layout: 'beforeAuthPage',
         data() {
             return {}
         },
-        components: {}
+        components: {
+      //      wave
+        }
     }
 </script>
 
 <style lang="scss" scoped>
-    .toppage-wrapper{
-        background:#36393E;
-        overflow: hidden;
-        height:100vh;
-        width:100vw;
-        color: white;
-        background: linear-gradient(-135deg, #E4A972, #39ACAC),
-            linear-gradient(75deg, #E4A972, #9941D8, #79ffff)fixed;
         .container{
             position:fixed;
             top: 50%;
@@ -60,13 +58,7 @@
                 display:flex;
                 justify-content: space-around;
                 width:100%;
-                button{
-                    color:#333;
-                    background:white;
-                    border-radius:10px;
-                    padding:10px;
-                }
+
             }
         }
-    }
 </style>
