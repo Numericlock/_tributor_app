@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  middleware: 'not_logined_user',
-  layout: 'home',
+  //middleware: 'not_logined_user',
+  layout: 'main',
 }
 </script>
