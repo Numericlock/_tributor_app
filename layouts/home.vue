@@ -64,11 +64,6 @@ export default {
           title: '管理者一覧',
           to: '/list'
         },
-        {
-          icon: 'mdi-account',
-          title: 'ログアウト',
-          to: '/logout'
-        },
       ],
       miniVariant: false,
       title: 'Laravel Nuxt Admin'

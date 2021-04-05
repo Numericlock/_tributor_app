@@ -1,4 +1,3 @@
-import $cookies from "cookie-universal-nuxt";
 export const state = () => ({
   user: null
 })
@@ -19,11 +18,11 @@ export const actions = {
     commit('setUser', response)
   },
   async logout ({ commit }) {
-    //const response = await this.$axios.$post('/logout')
-    //  .catch(err => err.response)
-//
-//    if (response.status !== 200) { /* TODO エラー処理 */ }
-    await this.$cookies.remove("laravel_session"); 
+    const response = await this.$axios.$post('/logout')
+      .catch(err => err.response)
+
+    if (response.status !== 200) { /* TODO エラー処理 */ }
+
     commit('setUser', null)
   }
 }
