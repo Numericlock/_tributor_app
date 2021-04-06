@@ -11,13 +11,15 @@
         components: {
         },
         methods:{
-            async logOut(){
-                await this.$store.dispatch('auth/logout');
-               // this.$router.push('/');
-            } 
+              async logout(){
+                await this.$store.dispatch('auth/logout')
+                this.$router.push('/login')
+                
+              }
+            
         },
         mounted(){
-            this.logOut();
+            this.logout();
         },
     }
 </script>

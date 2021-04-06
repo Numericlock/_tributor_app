@@ -50,14 +50,14 @@
         },
         components: {},
         methods: {
-//            /async submit () {
-//            /  await this.$store.dispatch('users/create', {
-//            /    email: this.email,
-//            /    name: this.name,
-//            /    password: this.password
-//            /  })
-//            /  this.$router.push('/login');
-//            /}
+            async submit () {
+              await this.$store.dispatch('auth/register', {
+                email: this.email,
+                name: this.name,
+                password: this.password
+              })
+              this.$router.push('/login');
+            }
         }
     }
 </script>
