@@ -4,7 +4,7 @@
 
 <script>
     export default {
-      layout: 'main3',
+      layout: 'main2',
         data () {
             return {
             }
