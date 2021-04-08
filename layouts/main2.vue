@@ -8,7 +8,7 @@
                     <v-col xl=2 lg=2 md=2 sm=2 cols=1>
                         <v-sheet min-height="97vh" min-width="90px">
                             <v-list shaped>
-                                <v-list-item v-for="link in links" :key="n" link class="my-5">
+                                <v-list-item v-for="link in links"  link class="my-5">
                                     <v-list-item-content class="hidden-md-and-down">
                                         <v-list-item-title>{{ link.name }}</v-list-item-title>
                                     </v-list-item-content>
@@ -62,7 +62,20 @@
                             </v-btn>
                             <v-divider class="mx-3 my-5"></v-divider>
 
-                            <v-avatar v-for="n in 6" :key="n" class="d-block text-center mx-auto mb-9" color="grey lighten-1" size="28"></v-avatar>
+                            <v-avatar v-for="n in 6" :key="n" class="d-block text-center mx-auto mb-9" color="grey lighten-1" size="28">
+                         <!-- <img
+                            v-if="message.avatar"
+                            alt="Avatar"
+                            src="https://avatars0.githubusercontent.com/u/9064066?v=4&s=460"
+                          >
+                          <v-icon
+                            v-else
+                            :color="message.color"
+                            v-text="message.icon"
+                          ></v-icon>
+    
+                            -->
+                            </v-avatar>
                         </v-sheet>
                     </v-col>
                     <v-col xl=3 lg=3 md=0 sm=0 cols=0 class="hidden-md-and-down">
@@ -88,6 +101,11 @@
         theme: {
             dark: true
         },
+        async fetch ({ store }) {
+          const list = await store.dispatch('list/fetchList')
+          //console.log("u?:"+list);
+          store.commit('list/setList', list)
+        },
         data: () => ({
             links: [
                 {name: 'Home',link: '/main',icon: 'mdi-home',current:false},
@@ -98,5 +116,19 @@
                 {name: 'Profile',link: '/main',icon: 'mdi-account',current:false},
             ],
         }),
+        computed: {
+        lists() {
+               //console.log("e?:"+this.$store.getters['list/list']);
+              return this.$store.getters['list/list']
+          }
+        },
+        methods:{
+            
+        },
+        async created(){
+              const list = await this.$store.dispatch('list/fetchList')
+             // console.log("u?:"+list);
+              this.$store.commit('list/setList', list) 
+        }
     }
 </script>
