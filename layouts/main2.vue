@@ -31,8 +31,8 @@
                         <v-sheet min-height="50px">
                             <!--  -->
                         </v-sheet>
-                        <v-content>
-                            <v-container fluid>
+                        <v-content >
+                            <v-container class="py-0" fluid>
                                 <nuxt />
                             </v-container>
                         </v-content>
@@ -46,7 +46,7 @@
                             <v-divider class="mx-3 my-5"></v-divider>
                             
                             <v-avatar v-for="list in lists" class="d-block text-center mx-auto mb-9" color="grey lighten-1" size="55">
-                                <img alt="Avatar" class="list-icon" :src="'data:image/png;base64,'+list.icon" />
+                                <img alt="Avatar" class="list-icon" :src="listIconUrl+list.id+'.png'" />
                                 <!-- <v-icon
                             v-else
                             :color="message.color"
@@ -81,6 +81,7 @@
             store.commit('list/setList', list)
         },
         data: () => ({
+            listIconUrl:'http://localhost:8000/img/list_icon/',
             links: [{
                     name: 'Home',
                     link: '/main',
