@@ -1,6 +1,6 @@
 <template>
     <section class="home-wrapper overflow-y-auto" @scroll="getScrollParam" ref="homeWrapper">
-        <div class="post-container" v-for="post in posts.posts">
+        <div class="post-container" v-for="post in posts">
             <div class="user-wrapper">
                 <v-avatar class="d-block text-center" color="grey lighten-1" size=55>
                     <img alt="Avatar" class="user-icon" :src="userIconUrl+post.post_user_id+'.png'" />
@@ -29,12 +29,13 @@
     export default {
         //middleware: 'not_logined_user',
         //layout: 'home',
+        
         layout: 'main2',
         async fetch({
             store
         }) {
             const home = await store.dispatch('home/fetchList')
-            //console.log("u?:"+home);
+            console.log(home);
             store.commit('home/setList', home)
         },
         components: {
@@ -45,14 +46,20 @@
             postImageUrl: "http://localhost:8000/img/post_img/",
             selectedImage: null,
             scroll:0,//スクロール量
-            selectedImageStyle: {
-                // backgroundImage: url('+ selectedImage +')
-            },
+            BottomPosition:0,
+            homeWrapper:null,
+
         }),
         computed: {
             posts() {
                 //console.log("e?:"+this.$store.getters['home/list']);
                 return this.$store.getters['home/list']
+            },
+            start_post() {
+                return this.$store.getters['home/start_post']
+            },
+            last_post() {
+                return this.$store.getters['home/last_post']
             }
         },
         methods: {
@@ -63,11 +70,29 @@
             getScrollParam:function(e){
                 this.scroll = e.target.scrollTop;
                 console.log(this.scroll);
-            }
+                console.log(this.getScrollBottom());
+                this.BottomPosition=this.getScrollBottom();
+                if( this.scroll > this.BottomPosition-(this.homeWrapper.offsetHeight*0.9)){
+                    console.log("bottomPos");
+                    this.getBeforePosts();
+                }else if(this.scroll < this.homeWrapper.offsetHeight*0.9){
+                    console.log("topPos");  
+                }
+            },
+            getScrollBottom(){
+                return this.homeWrapper.scrollHeight - this.homeWrapper.offsetHeight;
+            },
+            async getBeforePosts() {
+                var data = {
+                    num: this.last_post.post_at
+                };
+                await this.$store.dispatch('home/getBeforePosts', data)
+            },
         },
         mounted(){
             const dom = this.$refs.homeWrapper; 
-            console.log(dom.scrollHeight - dom.offsetHeight);
+            this.homeWrapper  = this.$refs.homeWrapper; 
+            console.log(this.getScrollBottom());
         }
     //    created() {
     //        window.addEventListener('scroll', this.onScroll)
