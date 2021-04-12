@@ -27,17 +27,24 @@ export const getters = {
 export const mutations = {
     setList(state, data) {
         state.posts = data.posts;
-        console.log(data.posts);
         state.start_post = data.start_post;
         state.last_post = data.last_post;
         state.userIds = data.userIds;
     },
-    create(state, data) {
+    pushToList(state, data) {
         const last_post_key = Object.keys(state.posts).slice(-1)[0];
+        var obj = state.posts;
         Object.keys(data.posts).forEach(function (key) {
-            state.posts[Number(last_post_key) + Number(key) + 1] = data.posts[key];
-            console.log(key);
+            obj[Number(last_post_key) + Number(key) + 1] = data.posts[key];
         });
+        
+        //更新のためのゴミ処理　::TODO
+        state.posts = {
+            ...state.posts,
+            obj
+        }
+        delete state.posts.obj;
+        ///////
         state.last_post = data.last_post;
         state.getPostsFlag = true;
     },
@@ -80,7 +87,7 @@ export const actions = {
                     //  state.getPostsFlag = true;
                 })
             console.log(response);
-            commit('create', response)
+            commit('pushToList', response)
         }
     },
     async create({
