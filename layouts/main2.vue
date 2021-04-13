@@ -31,7 +31,7 @@
                         <v-sheet min-height="50px">
                             <!--  -->
                         </v-sheet>
-                        <v-content >
+                        <v-content>
                             <v-container class="py-0" fluid>
                                 <nuxt />
                             </v-container>
@@ -44,7 +44,7 @@
                                 <v-icon>mdi-plus</v-icon>
                             </v-btn>
                             <v-divider class="mx-3 my-5"></v-divider>
-                            
+
                             <v-avatar v-for="list in lists" class="d-block text-center mx-auto mb-9" color="grey lighten-1" size="55">
                                 <img alt="Avatar" class="list-icon" :src="listIconUrl+list.id+'.png'" />
                                 <!-- <v-icon
@@ -64,6 +64,63 @@
                     </v-col>
                 </v-row>
             </v-container>
+            <div class="modal-background" v-if="postModal" @click.stop="postModal = false"></div>
+            <div class="modal" v-if="postModal">
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <div>投稿</div>
+                        <v-icon class="close-icon">mdi-close</v-icon>
+                    </div>
+                    <v-divider class="my-2"></v-divider>
+                    <div class="modal-content">
+                        <div class="user-icon-area">
+                            <v-avatar class="d-block text-center mx-auto" color="grey lighten-1" size="55">
+
+                            </v-avatar>
+                        </div>
+                        <v-textarea counter label="_tribute" no-resize clearable="true" :rules="rules" :value="value" maxlength="400"></v-textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <v-icon class="image-icon">mdi-image-plus</v-icon>
+                        <v-btn>次へ</v-btn>
+                    </div>
+                </div>
+            </div>
+            <div class="modal next-modal" v-if="postModal">
+                <div class="modal-container next-modal-container">
+                    <div class="modal-header next-modal-header">
+                        <div>リストを選択</div>
+                        <v-icon class="close-icon">mdi-close</v-icon>
+                    </div>
+                    <v-divider class="my-2"></v-divider>
+                    <div class="modal-content next-modal-content overflow-y-auto">
+                        <div class="list-container" v-for="list in lists">
+                            <div class="list-basic-container">
+                                <v-avatar size="55">
+                                    <img alt="Avatar" class="list-icon" :src="listIconUrl+list.id+'.png'" />
+                                </v-avatar>
+                                <div class="text-xl-h4 text-lg-h5 text-md-h6 text-sm-h6 text-caption font-weight-bold my-auto ml-4">{{ list.name }}</div>
+                                <div class="checkbox my-auto">
+                                    <div>
+                                        <input class="post-modal-list-checkbox" type="checkbox" :id="list.id" :name="list.id" />
+                                        <label class="checkbox-label" :for="list.id">
+                                            <span class="checkbox-span">
+                                                <!-- This span is needed to create the "checkbox" element -->
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <v-divider class="my-2"></v-divider>
+                    <div class="modal-footer next-modal-footer">
+                        <v-btn>戻る</v-btn>
+                        <v-checkbox label="非公開" color="red" v-model="isPrivate" hide-details class="my-auto"></v-checkbox>
+                        <v-btn>投稿</v-btn>
+                    </div>
+                </div>
+            </div>
         </v-main>
     </v-app>
 </template>
@@ -81,7 +138,11 @@
             store.commit('list/setList', list)
         },
         data: () => ({
-            listIconUrl:'http://localhost:8000/img/list_icon/',
+            listIconUrl: 'http://localhost:8000/img/list_icon/',
+            postModal: true,
+            rules: [v => v.length <= 400 || 'Max 400 characters'],
+            value: '',
+            isPrivate: false,
             links: [{
                     name: 'Home',
                     link: '/main',
@@ -142,6 +203,7 @@
         width: 10px;
         height: 10px;
     }
+
     /* スクロールの背景の設定 */
     *::-webkit-scrollbar-track {
         border-radius: 5px;
@@ -153,17 +215,260 @@
         border-radius: 5px;
         background: #666;
     }
-    .v-avatar{
-        transition:all 0.2s;
+
+    .v-avatar {
+        transition: all 0.2s;
         box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
     }
-    .v-avatar:hover{
-        height:65px !important;
-        width:65px !important;
+
+    .v-avatar:hover {
+        height: 65px !important;
+        width: 65px !important;
         border-radius: 50%;
         background: #e0e0e0;
-        box-shadow:  7px 7px 14px #969696,
-                     -7px -7px 14px #ffffff;
-        transition:all 0.2s;
+        box-shadow: 7px 7px 14px #969696,
+            -7px -7px 14px #ffffff;
+        transition: all 0.2s;
+    }
+
+    .modal-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(255, 255, 255, 0.8);
+        background-blend-mode: lighten;
+        z-index: 10000;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        opacity: .9;
+    }
+
+    .modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10001;
+
+    }
+
+    .modal-container {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        width: 600px;
+        min-width: 200px;
+        max-height: 95vh;
+        min-height: 300px;
+
+
+        background-color: #36393E;
+        border-radius: 6px;
+        border-color: none;
+
+
+        color: #ddd;
+        padding: 20px 30px;
+        background: rgba(62, 62, 62, 0.50);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        backdrop-filter: blur(5.0px);
+        -webkit-backdrop-filter: blur(5.0px);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+
+        .modal-header {
+            position: relative;
+
+            .close-icon {
+                position: absolute;
+                right: 0;
+                top: 0;
+            }
+        }
+
+        .modal-content {
+            display: flex;
+            flex-direction: row;
+
+            .user-icon-area {
+                min-width: 80px;
+                padding: 5px 10px;
+            }
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+        }
+    }
+
+    .next-modal-container {
+        .next-modal-content {
+            flex-direction: column;
+        }
+    }
+
+    .list-container {
+        display: flex;
+        flex-direction: column;
+        padding: 20px 30px;
+        background: rgba(62, 62, 62, 0.50);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        backdrop-filter: blur(5.0px);
+        -webkit-backdrop-filter: blur(5.0px);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+
+        div {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+        }
+
+        .list-basic-container {
+            justify-content: space-between;
+        }
+
+        .user-icon-container {
+            justify-content: flex-end;
+        }
+    }
+
+    .checkbox {
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+
+        div {
+            label {
+                display: inline-block;
+                color: #212226;
+                cursor: pointer;
+                position: relative;
+
+                span {
+                    display: inline-block;
+                    position: relative;
+                    background-color: transparent;
+                    width: 25px;
+                    height: 25px;
+                    transform-origin: center;
+                    border: 2px solid #212226;
+                    border-radius: 50%;
+                    vertical-align: -6px;
+                    margin-right: 10px;
+                    transition: background-color 150ms 200ms, transform 350ms cubic-bezier(0.78, -1.22, 0.17, 1.89);
+
+                    &:before {
+                        content: "";
+                        width: 0px;
+                        height: 2px;
+                        border-radius: 2px;
+                        background: #212226;
+                        position: absolute;
+                        transform: rotate(45deg);
+                        top: 11px;
+                        left: 7px;
+                        transition: width 50ms ease 50ms;
+                        transform-origin: 0% 0%;
+                    }
+
+                    &:after {
+                        content: "";
+                        width: 0;
+                        height: 2px;
+                        border-radius: 2px;
+                        background: #212226;
+                        position: absolute;
+                        transform: rotate(305deg);
+                        top: 14px;
+                        left: 8px;
+                        transition: width 50ms ease;
+                        transform-origin: 0% 0%;
+                    }
+                }
+            
+
+            &:hover {
+                span{
+                    &:before {
+                        width: 5px;
+                        transition: width 100ms ease;
+                    }
+
+                    &:after {
+                        width: 10px;
+                        transition: width 150ms ease 100ms;
+                    }
+                }
+            }
+            }
+
+            input[type="checkbox"] {
+                display: none; // hide the system checkbox
+
+              // Let's add some effects after the checkbox is checked
+
+              &:checked {
+                + label {
+                  span {
+                    background-color: #212226;
+                    transform: scale(1.25); // enlarge the box
+
+                    &:after {
+                      width: 10px;
+                      background: #1790b5;
+                      transition: width 150ms ease 100ms; // enlarge the tick
+                    }
+
+                    &:before {
+                      width: 5px;
+                      background: #1790b5;
+                      transition: width 150ms ease 100ms; // enlarge the tick
+                    }
+                  }
+
+                  &:hover { // copy the states for onMouseOver to avoid flickering
+                    span {
+                      background-color: #212226;
+                      transform: scale(1.25); // enlarge the box
+
+                      &:after {
+                        width: 10px;
+                        background: #1790b5;
+                        transition: width 150ms ease 100ms; // enlarge the tick
+                      }
+
+                      &:before {
+                        width: 5px;
+                        background: #1790b5;
+                        transition: width 150ms ease 100ms; // enlarge the tick
+                      }
+                    }  
+                  }
+                }
+              }
+            }
+        }
+    }
+
+    input[type="checkbox"]:checked+label:hover span {
+        background-color: #212226;
+        transform: scale(1.25);
+    }
+
+    input[type="checkbox"]:checked+label:hover span:after {
+        width: 10px;
+        background: #1790b5;
+        transition: width 150ms ease 100ms;
+    }
+
+    input[type="checkbox"]:checked+label:hover span:before {
+        width: 5px;
+        background: #1790b5;
+        transition: width 150ms ease 100ms;
     }
 </style>
