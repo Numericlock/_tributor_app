@@ -19,7 +19,7 @@
                                     </v-btn>
                                 </v-list-item>
                             </v-list>
-                            <v-btn class="d-block text-center mx-auto" fab dark large color="cyan">
+                            <v-btn class="d-block text-center mx-auto" fab dark large color="cyan" @click.stop = "isPostModal = true">
                                 <v-icon dark>
                                     mdi-pencil
                                 </v-icon>
@@ -64,68 +64,13 @@
                     </v-col>
                 </v-row>
             </v-container>
-            <div class="modal-background" v-if="postModal" @click.stop="postModal = false"></div>
-            <div class="modal" v-if="postModal">
-                <div class="modal-container">
-                    <div class="modal-header">
-                        <div>投稿</div>
-                        <v-icon class="close-icon">mdi-close</v-icon>
-                    </div>
-                    <v-divider class="my-2"></v-divider>
-                    <div class="modal-content">
-                        <div class="user-icon-area">
-                            <v-avatar class="d-block text-center mx-auto" color="grey lighten-1" size="55">
-
-                            </v-avatar>
-                        </div>
-                        <v-textarea counter label="_tribute" no-resize clearable="true" :rules="rules" :value="value" maxlength="400"></v-textarea>
-                    </div>
-                    <div class="modal-footer">
-                        <v-icon class="image-icon">mdi-image-plus</v-icon>
-                        <v-btn>次へ</v-btn>
-                    </div>
-                </div>
-            </div>
-            <div class="modal next-modal" v-if="postModal">
-                <div class="modal-container next-modal-container">
-                    <div class="modal-header next-modal-header">
-                        <div>リストを選択</div>
-                        <v-icon class="close-icon">mdi-close</v-icon>
-                    </div>
-                    <v-divider class="my-2"></v-divider>
-                    <div class="modal-content next-modal-content overflow-y-auto">
-                        <div class="list-container" v-for="list in lists">
-                            <div class="list-basic-container">
-                                <v-avatar size="55">
-                                    <img alt="Avatar" class="list-icon" :src="listIconUrl+list.id+'.png'" />
-                                </v-avatar>
-                                <div class="text-xl-h4 text-lg-h5 text-md-h6 text-sm-h6 text-caption font-weight-bold my-auto ml-4">{{ list.name }}</div>
-                                <div class="checkbox my-auto">
-                                    <div>
-                                        <input class="post-modal-list-checkbox" type="checkbox" :id="list.id" :name="list.id" />
-                                        <label class="checkbox-label" :for="list.id">
-                                            <span class="checkbox-span">
-                                                <!-- This span is needed to create the "checkbox" element -->
-                                            </span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <v-divider class="my-2"></v-divider>
-                    <div class="modal-footer next-modal-footer">
-                        <v-btn>戻る</v-btn>
-                        <v-checkbox label="非公開" color="red" v-model="isPrivate" hide-details class="my-auto"></v-checkbox>
-                        <v-btn>投稿</v-btn>
-                    </div>
-                </div>
-            </div>
+            <PostModal v-model="isPostModal"/>
         </v-main>
     </v-app>
 </template>
 
 <script>
+    import PostModal from '~/components/PostModal.vue'
     export default {
         theme: {
             dark: true
@@ -137,12 +82,12 @@
             //console.log("u?:"+list);
             store.commit('list/setList', list)
         },
+        components: {
+            PostModal,
+        },
         data: () => ({
             listIconUrl: 'http://localhost:8000/img/list_icon/',
-            postModal: true,
-            rules: [v => v.length <= 400 || 'Max 400 characters'],
-            value: '',
-            isPrivate: false,
+            isPostModal:false,
             links: [{
                     name: 'Home',
                     link: '/main',
@@ -321,15 +266,15 @@
         -webkit-backdrop-filter: blur(5.0px);
         border-radius: 10px;
         border: 1px solid rgba(255, 255, 255, 0.18);
-
-        div {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-        }
-
+        
         .list-basic-container {
+            display: flex;
             justify-content: space-between;
+            width:100%;
+            div{
+                display: flex;
+                flex-direction: row;
+            }
         }
 
         .user-icon-container {
@@ -453,22 +398,5 @@
               }
             }
         }
-    }
-
-    input[type="checkbox"]:checked+label:hover span {
-        background-color: #212226;
-        transform: scale(1.25);
-    }
-
-    input[type="checkbox"]:checked+label:hover span:after {
-        width: 10px;
-        background: #1790b5;
-        transition: width 150ms ease 100ms;
-    }
-
-    input[type="checkbox"]:checked+label:hover span:before {
-        width: 5px;
-        background: #1790b5;
-        transition: width 150ms ease 100ms;
     }
 </style>

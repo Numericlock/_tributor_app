@@ -1,5 +1,6 @@
 import Sass from 'sass'
 import Fiber from 'fibers'
+
 require('dotenv').config()
 const environment = process.env.NODE_ENV || 'development';
 
@@ -26,13 +27,13 @@ export default {
   /*
   ** Global CSS
   */
-  css: [
-  ],
+  css: [ 'animate.css/animate.min.css' ],
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
-      '~/plugins/axios'
+      '~/plugins/axios',
+      '~/plugins/v-scroll-lock',
   ],
   /*
   ** Nuxt.js dev-modules
@@ -48,7 +49,7 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/proxy',
     '@nuxtjs/dotenv',
-    ['cookie-universal-nuxt', { parseJSON: false }]
+    ['cookie-universal-nuxt', { parseJSON: false }],
   ],
   proxy: {
     '/api': (environment === 'development') ? 'http://localhost:8000' : 'https://api.example.com'
