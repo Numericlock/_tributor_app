@@ -19,10 +19,19 @@
 
                             </v-avatar>
                         </div>
-                        <v-textarea counter label="_tribute" no-resize :rules="rules" v-model="textValue" maxlength="400"></v-textarea>
+                        <div class="input-area">
+                            <v-textarea counter label="_tribute" no-resize :rules="rules" v-model="textValue" maxlength="400"></v-textarea>
+                            <div>
+                                <img v-for="file in attachedFiles" :src="file"/>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <v-icon class="image-icon">mdi-image-plus</v-icon>
+                        <input
+                            type="file"
+                            @change="changeImage"
+                        >
                         <v-btn @click="nextModalValidate">次へ</v-btn>
                     </div>
                 </div>
@@ -44,7 +53,7 @@
                                     <v-avatar size="55">
                                         <img alt="Avatar" class="list-icon" :src="listIconUrl+list.id+'.png'" />
                                     </v-avatar>
-                                    <div class="text-xl-h4 text-lg-h5 text-md-h6 text-sm-h6 text-caption font-weight-bold my-auto ml-4">
+                                    <div class="text-xl-h6 text-lg-h6 text-md-h6 text-sm-h6 text-caption font-weight-bold my-auto ml-4">
                                         {{ list.name }}
                                     </div>
                                 </div>
@@ -65,11 +74,20 @@
                         </transition>
                         
                     </div>
+                    <v-alert
+                        border="right"
+                        colored-border
+                        type="error"
+                        elevation="2"
+                        v-if="listSelectValidateAlert"
+                    >
+                        Fusce commodo aliquam arcu. Pellentesque posuere. Phasellus tempus. Donec   posuere vulputate arcu.
+                    </v-alert>
                     <v-divider class="my-2"></v-divider>
                     <div class="modal-footer next-modal-footer">
                         <v-btn @click="modalBack">戻る</v-btn>
                         <v-checkbox label="非公開" color="red" v-model="isPrivate" hide-details @change="privateChangeAction" class="my-auto"></v-checkbox>
-                        <v-btn @click="postValidate">投稿</v-btn>
+                        <v-btn @click="postRequest">投稿</v-btn>
                     </div>
                 </div>
             </div>
@@ -117,10 +135,15 @@
                 selectedLists: [],
                 tmpSelectedLists: [],
                 scroll:0,
+                attachedFiles:[],
                // firstModal:"first-next",
+                selectedImageUrl: null,
+                loadedImage: null,
             }
         },
-        components: {},
+        components: {
+            
+        },
         computed: {
             firstModal(){
                 let name = "first";
@@ -132,9 +155,16 @@
                 if(this.secondModalNext)name = "second-next"; 
                 return name;
             },
-            lists() {
+            lists(){
                 //console.log("e?:"+this.$store.getters['list/list']);
                 return this.$store.getters['list/list']
+            },
+            listSelectValidateAlert(){
+                let result;
+                if(this.isPrivate && this.selectedLists.length != 0) {
+                   result = false;
+                }
+                return result;
             }
         },
         // data: vm => ({}),
@@ -176,8 +206,24 @@
                 this.textValue = '';
             },
             postValidate(){
-                console.log(this.selectedLists);
-                
+                if(this.textValue.trim() && this.isPrivate || this.textValue.trim() && this.selectedLists.length != 0){
+                    return true;
+                }else{
+                    return false;
+                }
+            },
+            async postRequest() {
+                if(this.postValidate){
+                    var data = {
+                        content_text: this.textValue,
+                        parent_post_id:null,
+                        attached_files:[],
+                        lists:this.selectedLists,
+
+                    };
+                    await this.$store.dispatch('post/create', data)
+                    this.modalRemove();
+                }
             },
             privateChangeAction(){
                 if(this.isPrivate){
@@ -189,6 +235,17 @@
                     this.return_scroll();
                     this.selectedLists = this.tmpSelectedLists;
                 } 
+            },
+            changeImage(e) {
+                if(this.attachedFiles.length < 4){
+                    var file_reader = new FileReader();
+                    file_reader.addEventListener('load', function(e) {
+                        this.attachedFiles.push(e.target.result); 
+                        console.log(e.target.result);
+                    }.bind(this));
+                    file_reader.readAsDataURL(e.target.files[0]);
+                    console.log(this.attachedFiles);
+                }
             },
             no_scroll(){
                 // PCでのスクロール禁止
@@ -338,10 +395,14 @@
         .modal-content {
             display: flex;
             flex-direction: row;
-
             .user-icon-area {
                 min-width: 80px;
                 padding: 5px 10px;
+            }
+            .input-area{
+                width:100%;
+                display: flex;
+                flex-direction: column;
             }
         }
 

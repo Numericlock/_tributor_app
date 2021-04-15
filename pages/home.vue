@@ -5,7 +5,7 @@
                 <v-avatar class="d-block text-center" color="grey lighten-1" size=55>
                     <img alt="Avatar" class="user-icon" :src="userIconUrl+post.post_user_id+'.png'" />
                 </v-avatar>
-                <div class="text-xl-h4 text-lg-h6 text-md-body-1 text-sm-body-2 text-caption font-weight-bold my-auto ml-4">{{ post.users_name }}</div>
+                <div class="text-xl-h6 text-lg-h6 text-md-body-1 text-sm-body-2 text-caption font-weight-bold my-auto ml-4">{{ post.users_name }}</div>
             </div>
             <div class="text-wrapper">
                 <p>{{post.content_text}}</p>
