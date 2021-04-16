@@ -65,12 +65,14 @@
                 </v-row>
             </v-container>
             <PostModal v-model="isPostModal"/>
+            <ListPostModal v-model="isListPostModal"/>
         </v-main>
     </v-app>
 </template>
 
 <script>
     import PostModal from '~/components/PostModal.vue'
+    import ListPostModal from '~/components/ListPostModal.vue'
     export default {
         theme: {
             dark: true
@@ -84,10 +86,12 @@
         },
         components: {
             PostModal,
+            ListPostModal,
         },
         data: () => ({
             listIconUrl: 'http://localhost:8000/img/list_icon/',
             isPostModal:false,
+            isListPostModal:true,
             links: [{
                     name: 'Home',
                     link: '/main',
