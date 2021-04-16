@@ -16,22 +16,33 @@
                     <div class="modal-content">
                         <div class="user-icon-area">
                             <v-avatar class="d-block text-center mx-auto" color="grey lighten-1" size="55">
-
+                                
                             </v-avatar>
                         </div>
                         <div class="input-area">
                             <v-textarea counter label="_tribute" no-resize :rules="rules" v-model="textValue" maxlength="400"></v-textarea>
-                            <div>
-                                <img v-for="file in attachedFiles" :src="file"/>
+                            <div class="input-images my-3" v-if="attachedFiles.length != 0">
+                                <div class="images-wrapper mr-1">
+                                    <div v-for="{file , key} in attachedFrontOrBackFiles(true)" class="mb-1">
+                                        <v-icon class="close-icon" color="white" @click="removeImage(key)">mdi-close</v-icon>
+                                        <img :src="file" />
+                                    </div>
+                                </div>
+                                <div class="images-wrapper">
+                                    <div v-for="{file , key} in attachedFrontOrBackFiles(false)" class="mb-1">
+                                        <v-icon class="close-icon" color="white" @click="removeImage(key)">mdi-close</v-icon>
+                                        <img :src="file" />
+                                    </div>
+                                </div>
                             </div>
+                            <v-divider class="my-2"></v-divider>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <v-icon class="image-icon">mdi-image-plus</v-icon>
-                        <input
-                            type="file"
-                            @change="changeImage"
-                        >
+                        <label for="image_file_input" class="my-auto">
+                            <v-icon class="image-icon">mdi-image-plus</v-icon>
+                        </label>
+                        <input type="file" id="image_file_input" @change="changeImage">
                         <v-btn @click="nextModalValidate">次へ</v-btn>
                     </div>
                 </div>
@@ -59,7 +70,7 @@
                                 </div>
                                 <div class="checkbox my-auto">
                                     <div>
-                                        <input class="post-modal-list-checkbox" type="checkbox" :id="list.id" :name="list.id"   :value = "list.id" v-model="selectedLists"/>
+                                        <input class="post-modal-list-checkbox" type="checkbox" :id="list.id" :name="list.id" :value="list.id" v-model="selectedLists" />
                                         <label class="checkbox-label" :for="list.id">
                                             <span class="checkbox-span">
                                                 <!-- This span is needed to create the "checkbox" element -->
@@ -72,16 +83,10 @@
                         <transition　name="first">
                             <div class="blind-mask" v-if="isPrivate" :style="'top:'+scroll+'px;'"></div>
                         </transition>
-                        
+
                     </div>
-                    <v-alert
-                        border="right"
-                        colored-border
-                        type="error"
-                        elevation="2"
-                        v-if="listSelectValidateAlert"
-                    >
-                        Fusce commodo aliquam arcu. Pellentesque posuere. Phasellus tempus. Donec   posuere vulputate arcu.
+                    <v-alert border="right" colored-border type="error" elevation="2" v-if="listSelectValidateAlert">
+                        Fusce commodo aliquam arcu. Pellentesque posuere. Phasellus tempus. Donec posuere vulputate arcu.
                     </v-alert>
                     <v-divider class="my-2"></v-divider>
                     <div class="modal-footer next-modal-footer">
@@ -92,9 +97,9 @@
                 </div>
             </div>
         </transition>
-        
-        
-        
+
+
+
         <transition name="first">
             <div class="attention-modal-background modal-background" v-if="isAttention && value" @click="isAttention = false">
             </div>
@@ -127,142 +132,160 @@
                 listIconUrl: 'http://localhost:8000/img/list_icon/',
                 rules: [v => v.length <= 400 || 'Max 400 characters'],
                 textValue: '',
-                modal:true,
-                firstModalNext:false,
-                secondModalNext:false,
-                isAttention:false,
-                attentionText:"内容が削除されます",
+                modal: true,
+                firstModalNext: false,
+                secondModalNext: false,
+                isAttention: false,
+                attentionText: "内容が削除されます",
                 selectedLists: [],
                 tmpSelectedLists: [],
-                scroll:0,
-                attachedFiles:[],
-               // firstModal:"first-next",
+                scroll: 0,
+                attachedFiles: [],
+                // firstModal:"first-next",
                 selectedImageUrl: null,
                 loadedImage: null,
             }
         },
         components: {
-            
+
         },
         computed: {
-            firstModal(){
+            firstModal() {
                 let name = "first";
-                if(this.firstModalNext)name = "first-next"; 
-                return name;
-            },            
-            secondModal(){
-                let name = "second";
-                if(this.secondModalNext)name = "second-next"; 
+                if (this.firstModalNext) name = "first-next";
                 return name;
             },
-            lists(){
-                //console.log("e?:"+this.$store.getters['list/list']);
+            secondModal() {
+                let name = "second";
+                if (this.secondModalNext) name = "second-next";
+                return name;
+            },
+            lists() {
                 return this.$store.getters['list/list']
             },
-            listSelectValidateAlert(){
+            listSelectValidateAlert() {
                 let result;
-                if(this.isPrivate && this.selectedLists.length != 0) {
-                   result = false;
+                if (this.isPrivate && this.selectedLists.length != 0) {
+                    result = false;
                 }
                 return result;
-            }
+            },
+            attachedFrontOrBackFiles(front) {
+                let that = this;
+                return function(front) {
+                    let result = [];
+                    if (front) {
+                        if (that.attachedFiles[0]) result.push({key:0,file:that.attachedFiles[0]});
+                        if (that.attachedFiles[3]) result.push({key:3,file:that.attachedFiles[3]});
+                    } else {
+                        if (that.attachedFiles[1]) result.push({key:1,file:that.attachedFiles[1]});
+                        if (that.attachedFiles[2]) result.push({key:2,file:that.attachedFiles[2]});
+                    }
+                    return result;
+                }
+            },
         },
         // data: vm => ({}),
         methods: {
             handle(bool) {
                 this.$emit('input', bool)
             },
-            attentionModalController(){
-              
-            },
-            nextModalValidate(){
-                console.log(this.textValue);
-                if(this.textValue.trim()){
+            nextModalValidate() {
+                if (this.inputValidate()) {
                     this.firstModalNext = true;
-                    this.modal = false;  
+                    this.modal = false;
                 }
             },
-            modalBack(){
-                this.firstModalNext =  false;
+            modalBack() {
+                this.firstModalNext = false;
                 this.modal = true;
             },
-            modalAttention(){
-                if(this.textValue.trim()){
-                    this.isAttention = true;
-                }else{
-                    this.modalRemove();
-                }
+            modalAttention() {
+                if (this.textValue.trim()) this.isAttention = true;
+                else this.modalRemove();
             },
-            modalRemove(){
-                this.modal=true;
-                this.firstModalNext=false;
-                this.secondModalNext=false;
-                this.isAttention=false;
-                this.isPrivate=false;
+            modalRemove() {
+                this.modal = true;
+                this.firstModalNext = false;
+                this.secondModalNext = false;
+                this.isAttention = false;
+                this.isPrivate = false;
                 this.return_scroll();
                 this.selectedLists = [];
                 this.scroll = 0;
                 this.handle(false);
                 this.textValue = '';
             },
-            postValidate(){
-                if(this.textValue.trim() && this.isPrivate || this.textValue.trim() && this.selectedLists.length != 0){
-                    return true;
-                }else{
-                    return false;
-                }
+            inputValidate(){
+                if(this.textValue.trim() || this.attachedFiles.length != 0 && this.attachedFiles.length <= 4 )return true;
+                else return false;
+            },
+            listsValidate(){
+                if(this.isPrivate && this.selectedLists.length == 0 || !this.isPrivate && this.selectedLists.length != 0)return true;
+                else return false;
+            },
+            postValidate() {
+                if(this.inputValidate() && this.listsValidate()) return true;
+                else return false;
             },
             async postRequest() {
-                if(this.postValidate){
+                if (this.postValidate()) {
                     var data = {
                         content_text: this.textValue,
-                        parent_post_id:null,
-                        attached_files:[],
-                        lists:this.selectedLists,
-
+                        parent_post_id: null,
+                        attached_files: this.attachedFiles,
+                        lists: this.selectedLists,
                     };
                     await this.$store.dispatch('post/create', data)
                     this.modalRemove();
                 }
             },
-            privateChangeAction(){
-                if(this.isPrivate){
+            privateChangeAction() {
+                if (this.isPrivate) {
                     this.no_scroll();
-                    this.tmpSelectedLists  = this.selectedLists;
+                    this.tmpSelectedLists = this.selectedLists;
                     this.selectedLists = [];
-                }
-                else{
+                } else {
                     this.return_scroll();
                     this.selectedLists = this.tmpSelectedLists;
-                } 
-            },
-            changeImage(e) {
-                if(this.attachedFiles.length < 4){
-                    var file_reader = new FileReader();
-                    file_reader.addEventListener('load', function(e) {
-                        this.attachedFiles.push(e.target.result); 
-                        console.log(e.target.result);
-                    }.bind(this));
-                    file_reader.readAsDataURL(e.target.files[0]);
-                    console.log(this.attachedFiles);
                 }
             },
-            no_scroll(){
-                // PCでのスクロール禁止
-                document.addEventListener("mousewheel", this.scroll_control, { passive: false });
-                // スマホでのタッチ操作でのスクロール禁止
-                document.addEventListener("touchmove", this.scroll_control, { passive: false }); 
+            changeImage(e) {
+                if (this.attachedFiles.length < 4) {
+                    var file_reader = new FileReader();
+                    file_reader.addEventListener('load', function(e) {
+                        this.attachedFiles.push(e.target.result);
+                    }.bind(this));
+                    file_reader.readAsDataURL(e.target.files[0]);
+                }
             },
-            return_scroll(){
+            removeImage(index){
+                this.attachedFiles.splice(index,1);
+            },
+            no_scroll() {
+                // PCでのスクロール禁止
+                document.addEventListener("mousewheel", this.scroll_control, {
+                    passive: false
+                });
+                // スマホでのタッチ操作でのスクロール禁止
+                document.addEventListener("touchmove", this.scroll_control, {
+                    passive: false
+                });
+            },
+            return_scroll() {
                 // PCでのスクロール禁止解除
-                document.removeEventListener("mousewheel", this.scroll_control, { passive: false });
+                document.removeEventListener("mousewheel", this.scroll_control, {
+                    passive: false
+                });
                 // スマホでのタッチ操作でのスクロール禁止解除
-                document.removeEventListener('touchmove', this.scroll_control, { passive: false });
+                document.removeEventListener('touchmove', this.scroll_control, {
+                    passive: false
+                });
             },
             scroll_control(event) {
                 event.preventDefault();
             },
-            getScrollParam:function(e){
+            getScrollParam: function(e) {
                 this.scroll = e.target.scrollTop;
             },
         },
@@ -291,43 +314,43 @@
     .first-leave-active,
     .first-enter-active {
         opacity: 1 !important;
-      transition: all 200ms;
+        transition: all 200ms;
     }
 
     /* 表示アニメーション */
     .first-enter,
-    .first-leave-to{
+    .first-leave-to {
         opacity: 0 !important;
     }
 
     .first-next-leave-active,
     .first-next-enter-active {
-      position: fixed;
-      left:50% !important;
-      transform: translate(-50%, -50%)!important;
-      transition: all 1s;
+        position: fixed;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        transition: all 1s;
     }
 
     /* 表示アニメーション */
     .first-next-enter,
-    .first-next-leave-to{
-        left:-50%;
-        transform: translate(-100vw, -50%)!important;
+    .first-next-leave-to {
+        left: -50%;
+        transform: translate(-100vw, -50%) !important;
     }
-    
+
     .second-leave-active,
     .second-enter-active {
-      position: fixed;
-      left:50% !important;
-      transform: translate(-50%, -50%)!important;
-      transition: all 1s;
+        position: fixed;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        transition: all 1s;
     }
 
     /* 表示アニメーション */
     .second-enter,
-    .second-leave-to{
-        left:-50%;
-        transform: translate(100vw, -50%)!important;
+    .second-leave-to {
+        left: -50%;
+        transform: translate(100vw, -50%) !important;
     }
 
     .modal-background {
@@ -344,9 +367,11 @@
         background-size: cover;
         opacity: .9;
     }
-    .attention-modal-background{
+
+    .attention-modal-background {
         z-index: 10002;
     }
+
     .modal {
         position: fixed;
         top: 50%;
@@ -355,9 +380,11 @@
         z-index: 10001;
 
     }
-    .attention-modal{
-         z-index: 10002;
+
+    .attention-modal {
+        z-index: 10002;
     }
+
     .modal-container {
         display: flex;
         flex-direction: column;
@@ -395,20 +422,54 @@
         .modal-content {
             display: flex;
             flex-direction: row;
+
             .user-icon-area {
                 min-width: 80px;
                 padding: 5px 10px;
+                padding-left:0;
             }
-            .input-area{
-                width:100%;
+
+            .input-area {
+                width: 100%;
                 display: flex;
                 flex-direction: column;
+
+                .input-images {
+                    display: flex;
+                    flex-direction: row;
+                    width: 100%;
+
+                    .images-wrapper {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        max-width: 50%;
+                        div{
+                            position: relative;
+                            height:100%;
+                            .close-icon{
+                                position: absolute;
+                                top:10px;
+                                right:10px;
+                            }
+                            img {
+                                width: 100%;
+                                height: 100%;
+                                wobject-fit: cover;
+                                border-radius: 15px;
+                            }
+                        }
+                    }
+                }
             }
         }
 
         .modal-footer {
             display: flex;
             justify-content: space-between;
+            #image_file_input{
+                display:none;
+            }
         }
     }
 
@@ -416,21 +477,21 @@
         .next-modal-content {
             flex-direction: column;
             position: relative;
-            .blind-mask{
+
+            .blind-mask {
                 position: absolute;
-                width:100%;
-                height:100%;
+                width: 100%;
+                height: 100%;
                 background: repeating-linear-gradient(-35deg, rgba(177, 34, 26, 0.60), rgba(177, 34, 26, 0.60) 10px, rgba(62, 62, 62, 0.50) 0, rgba(62, 62, 62, 0.50) 20px);
             }
         }
     }
-    
-    .attention-modal-container{
+
+    .attention-modal-container {
         width: auto;
         min-width: 200px;
         min-height: 150px;
         justify-content: space-around
-        
     }
 
     .list-container {
