@@ -13,20 +13,23 @@
                     </div>
                     <v-divider class="my-2"></v-divider>
                     <div class="modal-content">
-                        <div class="basic-input my-auto py-auto">
+                        <div class="basic-input">
                             <div class="list-icon-area">
-                                <v-avatar class="my-auto" color="grey lighten-1" size="55">
+                                <v-avatar color="grey lighten-1 my-5" size="55">
 
                                 </v-avatar>
                             </div>
-                            <div class="list-name-area py-auto">
-                                <v-text-field class="my-auto" label="List Name" solo></v-text-field>
+                            <div class="list-name-area ">
+                                <v-text-field class="my-5" label="List Name" solo></v-text-field>
                             </div>
                         </div>
+                        <v-divider class="my-2"></v-divider>
                         <div class="member-input">
                             <div class="list-members-wrapper"></div>
+                            <v-divider vertical></v-divider>
                             <div class="member-search-area"></div>
                         </div>
+                        <v-divider class="my-2"></v-divider>
                     </div>
                     <div class="modal-footer">
                         <v-btn >作成</v-btn>
@@ -88,7 +91,9 @@
     .first-leave-to {
         opacity: 0 !important;
     }
-
+    .my-auto{
+        margin-top:20px
+    }
     .modal-background {
         position: fixed;
         top: 0;
@@ -114,7 +119,6 @@
         left: 50%;
         transform: translate(-50%, -50%);
         z-index: 10001;
-
     }
 
     .attention-modal {
@@ -127,7 +131,7 @@
         text-align: center;
         width: 600px;
         min-width: 200px;
-        max-height: 95vh;
+        height: 95vh;
         min-height: 300px;
 
 
@@ -158,11 +162,22 @@
         .modal-content {
             display: flex;
             flex-direction: column;
-
+            height:100%;
             .basic-input {
                 display: flex;
                 flex-direction: row;
                 height: 100px;
+            }
+            .member-input{
+                display: flex;
+                flex-direction: row;
+                height:100%;
+                .list-members-wrapper{
+                    width:50%;
+                }
+                .member-search-area{
+                    width:50%;
+                }
             }
         }
 
