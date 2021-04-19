@@ -11,28 +11,70 @@
                         <div>リストを追加する</div>
                         <v-icon class="close-icon">mdi-close</v-icon>
                     </div>
+                    <div class="basic-input">
+                        <div class="list-icon-area">
+                            <v-avatar color="grey lighten-1 my-5" size="55">
+
+                            </v-avatar>
+                        </div>
+                        <div class="list-name-area ">
+                            <v-text-field class="my-auto" label="List Name" solo></v-text-field>
+                        </div>
+                    </div>
                     <v-divider class="my-2"></v-divider>
-                    <div class="modal-content">
-                        <div class="basic-input">
-                            <div class="list-icon-area">
-                                <v-avatar color="grey lighten-1 my-5" size="55">
+                    <div class="member-input">
+                        <div class="listed-members-wrapper pa-2 pl-0 overflow-y-auto">
+                            <transition-group name="first">
+                                <div class="listed-user-container dark" v-for="(user, index) in listedUsers" :key="index">
+                                    <v-avatar color="grey lighten-1 my-3 mx-2" size="55">
+                                         <img :src="userIconUrl+user.id+'.png'"/>
+                                    </v-avatar>
+                                    <v-divider vertical></v-divider>
+                                    <div class="listed-user-basic">
+                                        <div class="user-name">{{user.name}}</div>
+                                        <div class="user-id">@{{user.id}}</div>
+                                    </div>
+                                    <v-btn  class="close-icon  my-auto mr-3" @click="removeListedUsers(user,index)" fab small icon >
+                                        <v-icon color="red"  >mdi-close</v-icon>
+                                    </v-btn>
+                                </div>
+                            </transition-group>
+                            <!--
+                            <span class="listed-user-container2 dark" v-for="n of 9" :key="n">
+                                <v-avatar color="grey lighten-1 my-auto" size="30">
 
                                 </v-avatar>
-                            </div>
-                            <div class="list-name-area ">
-                                <v-text-field class="my-5" label="List Name" solo></v-text-field>
+                                
+                                <span class="user-id my-auto">@tessssssssssssssssssssssssssssstid</span>
+                                <v-icon class="close-icon my-auto mr-1" color="white">mdi-close</v-icon>
+                            </span>
+-->
+                        </div>
+                        <v-divider vertical class="mx-1"></v-divider>
+                        <div class="member-search-area overflow-y-auto">
+                            <v-text-field class="ma-2 search-box" label="User Name or ID" v-model="search" solo></v-text-field>
+                            <div class="search-result-container pa-2 pr-0">
+                                <transition-group name="first">
+                                    <div class="result-user-container dark" v-for="(user, index) in SearchUsers" :key="index">
+                                        <v-avatar color="grey lighten-1 my-3 mx-2" size="55">
+                                            <img :src="userIconUrl+user.user_id+'.png'"/>
+                                        </v-avatar>
+                                        <v-divider vertical></v-divider>
+                                        <div class="result-user-basic">
+                                            <div class="user-name">{{user.user_name}}</div>
+                                            <div class="user-id">@{{user.user_id}}</div>
+                                        </div>
+                                        <v-btn  class="plus-icon  my-auto mr-3" @click="addListedUsers(user,index)" fab small icon >
+                                            <v-icon color="green"  >mdi-plus</v-icon>
+                                        </v-btn>
+
+                                    </div>
+                                </transition-group>
                             </div>
                         </div>
-                        <v-divider class="my-2"></v-divider>
-                        <div class="member-input">
-                            <div class="list-members-wrapper"></div>
-                            <v-divider vertical></v-divider>
-                            <div class="member-search-area"></div>
-                        </div>
-                        <v-divider class="my-2"></v-divider>
                     </div>
                     <div class="modal-footer">
-                        <v-btn >作成</v-btn>
+                        <v-btn>作成</v-btn>
                     </div>
                 </div>
             </div>
@@ -49,19 +91,65 @@
         },
         data() {
             return {
-                modal: true
+                modal: true,
+                userIconUrl: "http://localhost:8000/img/icon_img/",
+                searchStr: '',
+                searchTimer: null,
+                SearchUsers: [],
+                listedUsers: [],
             }
         },
         components: {},
+        computed: {
+            search: {
+                get() {
+                    return this.searchStr;
+                },
+                async set(value) {
+                    this.searchStr = value;
+                    if(this.searchTimer) clearTimeout(this.searchTimer);
+                    this.searchTimer = window.setTimeout(this.searchPost, 700);
+                }
+            },
+            
+        },
         methods: {
             handle(bool) {
                 this.$emit('input', bool)
+            },
+            addListedUsers(user,index){
+                this.SearchUsers.splice(index,1);
+                this.listedUsers.push({id:user.user_id,name:user.user_name});
+            },
+            removeListedUsers(index){
+                this.listedUsers.splice(index,1);
+            },
+            async searchPost(){
+                const data = {
+                    str: this.searchStr
+                };
+                const response = await this.$axios.$post('/search/user', data)
+                    .catch(err => {
+                        console.log(err)
+                    })
+                console.log(response);  
+                if(this.listedUsers.length != 0){
+                    for(let i=0;i<response.length;i++){
+                        let flag = false;
+                        for(let k=0;k<this.listedUsers.length;k++){
+                            if(!flag)if(response[i].user_id == this.listedUsers[k].id) flag = true;
+                        }
+                        if(!flag) this.SearchUsers.push(response[i]);
+                    }
+                }else this.SearchUsers = response;
             },
         }
     }
 </script>
 
 <style lang="scss" scoped>
+    $card-color: #36393E;
+
     /* スクロールの幅の設定 */
     *::-webkit-scrollbar {
         width: 10px;
@@ -80,6 +168,15 @@
         background: #666;
     }
 
+    .dark {
+        background: rgba(62, 62, 62, 0.50);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        backdrop-filter: blur(5.0px);
+        -webkit-backdrop-filter: blur(5.0px);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
     .first-leave-active,
     .first-enter-active {
         opacity: 1 !important;
@@ -91,9 +188,11 @@
     .first-leave-to {
         opacity: 0 !important;
     }
-    .my-auto{
-        margin-top:20px
+
+    .my-auto {
+        margin-top: 20px
     }
+
     .modal-background {
         position: fixed;
         top: 0;
@@ -128,17 +227,18 @@
     .modal-container {
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
         text-align: center;
         width: 600px;
         min-width: 200px;
         height: 95vh;
+        max-height: 95vh;
         min-height: 300px;
 
 
         background-color: #36393E;
         border-radius: 6px;
         border-color: none;
-
 
         color: #ddd;
         padding: 20px 30px;
@@ -159,24 +259,116 @@
             }
         }
 
-        .modal-content {
+        .basic-input {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            
+        }
+
+        .member-input {
+            display: flex;
+            flex-direction: row;
             height:100%;
-            .basic-input {
+            max-height: calc(100% - 200px);
+
+            .listed-members-wrapper {
+                width: 50%;
+                max-width: 50%;
                 display: flex;
-                flex-direction: row;
-                height: 100px;
-            }
-            .member-input{
-                display: flex;
-                flex-direction: row;
-                height:100%;
-                .list-members-wrapper{
-                    width:50%;
+                flex-direction: column;
+
+                .listed-user-container {
+                    display: flex;
+                    flex-direction: row;
+                    border-radius: 10px;
+                    padding: 2px;
+
+                    .listed-user-basic {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        padding-left: 10px;
+                        text-align: left;
+                        position: relative;
+                        width: 100%;
+
+                        .user-name {}
+
+                        .user-id {
+                            word-wrap: break-word;
+                        }
+
+                        .close-icon {
+                            position: absolute;
+                            right: 0;
+                        }
+                    }
                 }
-                .member-search-area{
-                    width:50%;
+
+                .listed-user-container2 {
+                    display: flex;
+                    flex-direction: row;
+                    min-height: 30px;
+
+                    border-radius: 15px !important;
+                    max-width: 100%;
+                    overflow-wrap: break-word;
+
+                    .user-name {}
+
+                    .user-id {
+                        //max-width:calc(100% - 25px - 20px);
+                        overflow-wrap: break-word;
+                        word-break: break-all;
+                        text-align: left;
+                    }
+
+                    .close-icon {}
+                }
+            }
+
+            .member-search-area {
+                width: 50%;
+                display: flex;
+                flex-direction: column;
+
+                .search-box {
+                    position: sticky;
+                    height:60px;
+                    top: 8px;
+                    z-index: 10002;
+                }
+
+                .search-result-container {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-start;
+                    height:100%;
+                    .result-user-container {
+                        display: flex;
+                        flex-direction: row;
+                        border-radius: 10px;
+                        padding: 2px;
+
+                        .result-user-basic {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            padding-left: 10px;
+                            text-align: left;
+                            position: relative;
+                            width: 100%;
+
+                            .user-name {}
+
+                            .user-id {}
+
+                            .plus-icon {
+                                position: absolute;
+                                right: 0;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -184,10 +376,6 @@
         .modal-footer {
             display: flex;
             justify-content: space-between;
-
-            #image_file_input {
-                display: none;
-            }
         }
     }
 </style>
