@@ -8,7 +8,7 @@
                     <v-col xl=2 lg=2 md=2 sm=2 cols=1>
                         <v-sheet min-height="97vh" min-width="90px">
                             <v-list shaped>
-                                <v-list-item v-for="link in links" link class="my-5">
+                                <v-list-item v-for="(link, index) in links" :key="index" link class="my-5">
                                     <v-list-item-content class="hidden-md-and-down">
                                         <v-list-item-title>{{ link.name }}</v-list-item-title>
                                     </v-list-item-content>
@@ -31,11 +31,11 @@
                         <v-sheet min-height="50px">
                             <!--  -->
                         </v-sheet>
-                        <v-content>
+                        <v-main>
                             <v-container class="py-0" fluid>
                                 <nuxt />
                             </v-container>
-                        </v-content>
+                        </v-main>
                     </v-col>
 
                     <v-col xl=1 lg=1 md=1 sm=0 cols=0 class="hidden-sm-and-down">
@@ -45,7 +45,7 @@
                             </v-btn>
                             <v-divider class="mx-3 my-5"></v-divider>
 
-                            <v-avatar v-for="list in lists" class="d-block text-center mx-auto mb-9" color="grey lighten-1" size="55">
+                            <v-avatar v-for="(list, index) in lists" :key="index" class="d-block text-center mx-auto mb-9" color="grey lighten-1" size="55">
                                 <img alt="Avatar" class="list-icon" :src="listIconUrl+list.id+'.png'" />
                                 <!-- <v-icon
                             v-else

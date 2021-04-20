@@ -25,7 +25,7 @@
                     <div class="member-input">
                         <div class="listed-members-wrapper pa-2 pl-0 overflow-y-auto">
                             <transition-group name="first">
-                                <div class="listed-user-container dark" v-for="(user, index) in listedUsers" :key="index">
+                                <div class="listed-user-container dark" v-for="(user, index) in listedUsers" :key="user.id">
                                     <v-avatar color="grey lighten-1 my-3 mx-2" size="55">
                                          <img :src="userIconUrl+user.id+'.png'"/>
                                     </v-avatar>
@@ -55,7 +55,7 @@
                             <v-text-field class="ma-2 search-box" label="User Name or ID" v-model="search" solo></v-text-field>
                             <div class="search-result-container pa-2 pr-0">
                                 <transition-group name="first">
-                                    <div class="result-user-container dark" v-for="(user, index) in SearchUsers" :key="index">
+                                    <div class="result-user-container dark" v-for="(user, index) in SearchUsers" :key="user.user_id">
                                         <v-avatar color="grey lighten-1 my-3 mx-2" size="55">
                                             <img :src="userIconUrl+user.user_id+'.png'"/>
                                         </v-avatar>
