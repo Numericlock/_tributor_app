@@ -40,7 +40,7 @@
 
                     <v-col xl=1 lg=1 md=1 sm=0 cols=0 class="hidden-sm-and-down">
                         <v-sheet min-height="97vh" max-height="97vh" min-width="90px" class="mr-1 pt-4 overflow-y-auto">
-                            <v-btn class="d-block text-center mx-auto" color="grey darken-1" dark fab>
+                            <v-btn class="d-block text-center mx-auto" color="grey darken-1" @click.stop = "isListPostModal = true" dark fab>
                                 <v-icon>mdi-plus</v-icon>
                             </v-btn>
                             <v-divider class="mx-3 my-5"></v-divider>

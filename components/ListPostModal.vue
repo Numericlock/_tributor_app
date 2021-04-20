@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <transition name="first">
-            <div class="modal-background" v-if="value">
+            <div class="modal-background" v-if="value" >
             </div>
         </transition>
         <transition name="first">
@@ -12,13 +12,16 @@
                         <v-icon class="close-icon">mdi-close</v-icon>
                     </div>
                     <div class="basic-input">
-                        <div class="list-icon-area">
-                            <v-avatar color="grey lighten-1 my-5" size="55">
-
-                            </v-avatar>
-                        </div>
-                        <div class="list-name-area ">
-                            <v-text-field class="my-auto" label="List Name" solo></v-text-field>
+                        <v-avatar color="grey lighten-1 my-auto" size="55">
+                        </v-avatar>
+                        <v-text-field class="mt-7 ml-3" label="List Name" v-model="listName" solo></v-text-field>
+                        <div class="checkbox-wrapper">
+                            <v-simple-checkbox
+                              v-model="isPublish"
+                              color="green"
+                              class="pl-2 mt-7"
+                            ></v-simple-checkbox>
+                            <label>{{checkboxLabel}}</label>
                         </div>
                     </div>
                     <v-divider class="my-2"></v-divider>
@@ -74,15 +77,17 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <v-btn>作成</v-btn>
+                        <v-btn @click="postRequest()">作成</v-btn>
                     </div>
                 </div>
             </div>
         </transition>
+        <AttentionModal text="内容が削除されます" />
     </div>
 </template>
 
 <script>
+    import AttentionModal from '~/components/AttentionModal.vue'
     export default {
         props: {
             value: {
@@ -95,11 +100,15 @@
                 userIconUrl: "http://localhost:8000/img/icon_img/",
                 searchStr: '',
                 searchTimer: null,
+                listName:'',
                 SearchUsers: [],
                 listedUsers: [],
+                isPublish:true,
             }
         },
-        components: {},
+        components: {
+            AttentionModal,
+        },
         computed: {
             search: {
                 get() {
@@ -111,7 +120,9 @@
                     this.searchTimer = window.setTimeout(this.searchPost, 700);
                 }
             },
-            
+            checkboxLabel(){
+                 return (this.isPublish ? '公開'　:　'非公開');
+            },
         },
         methods: {
             handle(bool) {
@@ -124,6 +135,10 @@
             removeListedUsers(index){
                 this.listedUsers.splice(index,1);
             },
+            postValidate(){
+                if(this.listName.trim() && typeof(this.isPublish) == "boolean") return true;
+                else return false;
+            },
             async searchPost(){
                 const data = {
                     str: this.searchStr
@@ -132,7 +147,6 @@
                     .catch(err => {
                         console.log(err)
                     })
-                console.log(response);  
                 if(this.listedUsers.length != 0){
                     for(let i=0;i<response.length;i++){
                         let flag = false;
@@ -142,6 +156,27 @@
                         if(!flag) this.SearchUsers.push(response[i]);
                     }
                 }else this.SearchUsers = response;
+            },
+            async postRequest() {
+                if (this.postValidate()) {
+                    let userIds = [];
+                    if(this.listedUsers.length != 0 ) userIds = this.listedUsers.map(user => user.id);
+                    var data = {
+                        name: this.listName,
+                        publish: this.isPublish,
+                        users: userIds,
+                    };
+                    await this.$store.dispatch('list/create', data)
+                    //this.modalRemove();
+                }
+            },
+            modalRemove() {
+                this.listName = '';
+                this.isPublish = true;
+                this.listedUsers = [];
+                this.searchStr = '';
+                this.SearchUsers = [];
+                this.handle(false);
             },
         }
     }
@@ -262,7 +297,13 @@
         .basic-input {
             display: flex;
             flex-direction: row;
-            
+            height:100px;
+            .checkbox-wrapper{
+                width:80px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
         }
 
         .member-input {
@@ -376,6 +417,7 @@
         .modal-footer {
             display: flex;
             justify-content: space-between;
+            justify-content: flex-end;
         }
     }
 </style>

@@ -119,6 +119,7 @@
 </template>
 
 <script>
+    import AttentionModal from '~/components/AttentionModal.vue'
     export default {
         props: {
             value: {
@@ -147,7 +148,7 @@
             }
         },
         components: {
-
+            AttentionModal,
         },
         computed: {
             firstModal() {

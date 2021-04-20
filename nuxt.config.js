@@ -33,6 +33,7 @@ export default {
   */
   plugins: [
       '~/plugins/axios',
+      '~/plugins/vue-cropperjs',
       '~/plugins/v-scroll-lock',
   ],
   /*

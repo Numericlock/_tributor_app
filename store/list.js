@@ -38,8 +38,8 @@ export const actions = {
         console.log(err)
       })
   },
-  async create ({ commit }, user) {
-    const response = await this.$axios.$post('/list', user)
+  async create ({ commit }, data) {
+    const response = await this.$axios.$post('/lists', data)
       .catch(err => {
         console.log(err)
       })
