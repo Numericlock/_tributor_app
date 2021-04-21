@@ -1,5 +1,5 @@
 <template>
-    <div class="modal" :style="{'background-color':'rgba(0, 0, 0,' + transparency,'z-index':zIndex}"></div>
+    <div class="modal" :style="{'z-index':zIndex}"></div>
 </template>
 
 <script>
@@ -28,5 +28,11 @@
         left: 0;
         width: 100vw;
         height: 100vh;
+        background-color: rgba(255, 255, 255, 0.8);
+        background-blend-mode: lighten;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        opacity: .9;
     }
 </style>

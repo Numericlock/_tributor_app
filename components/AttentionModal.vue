@@ -1,16 +1,15 @@
 <template>
     <div class="wrapper">
         <transition name="first">
-            <div class="attention-modal-background" v-if="value" @click="handle(false)">
-            </div>
+            <ModalBackground :zIndex="zIndex" v-if="value" @click.native="handle(false)"/>
         </transition>
         <transition　name="first">
-            <div class="attention-modal" v-if="value">
+            <div class="attention-modal" v-if="value" :style="{'z-index':zIndex}">
                 <div class="attention-modal-container">
                     <div class="attention-modal-text">{{text}}</div>
                     <div class="attention-modal-buttons">
-                        <v-btn color="red" @click="isAttention = false">NO</v-btn>
-                        <v-btn @click="modalRemove">OK</v-btn>
+                        <v-btn color="red" @click="handle(false)">NO</v-btn>
+                        <v-btn @click="submit()">OK</v-btn>
                     </div>
                 </div>
             </div>
@@ -19,6 +18,7 @@
 </template>
 
 <script>
+    import ModalBackground from '~/components/ModalBackground.vue'
     export default {
         props: {
             zIndex:{
@@ -34,10 +34,15 @@
             }
         },
         components: {
+            ModalBackground,
         },
         methods: {
             handle(bool) {
                 this.$emit('input', bool)
+            },
+            submit() {
+                this.handle(false);
+                this.$emit('submit')
             },
         }
     }
@@ -56,27 +61,11 @@
         opacity: 0 !important;
     }
 
-    .attention-modal-background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(255, 255, 255, 0.8);
-        background-blend-mode: lighten;
-        z-index: 10002;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        opacity: .9;
-    }
-
     .attention-modal {
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        z-index: 10002;
         .attention-modal-container {
             display: flex;
             flex-direction: column;
@@ -94,6 +83,11 @@
             -webkit-backdrop-filter: blur(5.0px);
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.18);
+            .attention-modal-buttons{
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+            }
         }
     }
 </style>

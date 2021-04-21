@@ -1,12 +1,11 @@
 <template>
     <div class="wrapper">
         <transition name="first">
-            <div class="modal-background" v-if="value" @click="modalAttention">
-            </div>
+            <ModalBackground :zIndex="zIndex" v-if="value" @click.native="modalAttention()"/>
         </transition>
         <!--<transition :name="firstModal">-->
         <transition name="first">
-            <div class="modal" v-if="modal && value">
+            <div class="modal" v-if="modal && value" :style="{'z-index':zIndex}">
                 <div class="modal-container">
                     <div class="modal-header">
                         <div>投稿</div>
@@ -50,7 +49,7 @@
         </transition>
         <!--<transition　:name="secondModal">-->
         <transition　name="first">
-            <div class="modal next-modal" v-if="firstModalNext && value">
+            <div class="modal next-modal" v-if="firstModalNext && value" :style="{'z-index':zIndex}">
                 <div class="modal-container next-modal-container">
                     <div class="modal-header next-modal-header">
                         <div>リストを選択</div>
@@ -97,34 +96,21 @@
                 </div>
             </div>
         </transition>
-
-
-
-        <transition name="first">
-            <div class="attention-modal-background modal-background" v-if="isAttention && value" @click="isAttention = false">
-            </div>
-        </transition>
-        <transition　name="first">
-            <div class="attention-modal modal" v-if="isAttention && value">
-                <div class="attention-modal-container modal-container">
-                    <div class="attention-modal-text">{{attentionText}}</div>
-                    <div class="attention-modal-buttons">
-                        <v-btn color="red" @click="isAttention = false">NO</v-btn>
-                        <v-btn @click="modalRemove">OK</v-btn>
-                    </div>
-                </div>
-            </div>
-        </transition>
+        <AttentionModal :zIndex="zIndex" text="内容が削除されます" @submit="modalRemove()" v-model="isAttention"/>
     </div>
 </template>
 
 <script>
+    import ModalBackground from '~/components/ModalBackground.vue'
     import AttentionModal from '~/components/AttentionModal.vue'
     export default {
         props: {
             value: {
                 default: false,
-            }
+            },
+            zIndex:{
+                default:1000
+            },
         },
         data() {
             return {
@@ -149,6 +135,7 @@
         },
         components: {
             AttentionModal,
+            ModalBackground,
         },
         computed: {
             firstModal() {
@@ -354,36 +341,12 @@
         transform: translate(100vw, -50%) !important;
     }
 
-    .modal-background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(255, 255, 255, 0.8);
-        background-blend-mode: lighten;
-        z-index: 10000;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        opacity: .9;
-    }
-
-    .attention-modal-background {
-        z-index: 10002;
-    }
-
     .modal {
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        z-index: 10001;
 
-    }
-
-    .attention-modal {
-        z-index: 10002;
     }
 
     .modal-container {
@@ -486,13 +449,6 @@
                 background: repeating-linear-gradient(-35deg, rgba(177, 34, 26, 0.60), rgba(177, 34, 26, 0.60) 10px, rgba(62, 62, 62, 0.50) 0, rgba(62, 62, 62, 0.50) 20px);
             }
         }
-    }
-
-    .attention-modal-container {
-        width: auto;
-        min-width: 200px;
-        min-height: 150px;
-        justify-content: space-around
     }
 
     .list-container {

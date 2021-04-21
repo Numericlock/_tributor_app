@@ -19,7 +19,7 @@
                                     </v-btn>
                                 </v-list-item>
                             </v-list>
-                            <v-btn class="d-block text-center mx-auto" fab dark large color="cyan" @click.stop = "isPostModal = true">
+                            <v-btn class="d-block text-center mx-auto" fab dark large color="cyan" @click.stop="isPostModal = true">
                                 <v-icon dark>
                                     mdi-pencil
                                 </v-icon>
@@ -29,7 +29,6 @@
 
                     <v-col xl=6 lg=6 md=9 sm=10 cols=11>
                         <v-sheet min-height="50px">
-                            <!--  -->
                         </v-sheet>
                         <v-main>
                             <v-container class="py-0" fluid>
@@ -40,20 +39,13 @@
 
                     <v-col xl=1 lg=1 md=1 sm=0 cols=0 class="hidden-sm-and-down">
                         <v-sheet min-height="97vh" max-height="97vh" min-width="90px" class="mr-1 pt-4 overflow-y-auto">
-                            <v-btn class="d-block text-center mx-auto" color="grey darken-1" @click.stop = "isListPostModal = true" dark fab>
+                            <v-btn class="d-block text-center mx-auto" color="grey darken-1" @click.stop="isListPostModal = true" dark fab>
                                 <v-icon>mdi-plus</v-icon>
                             </v-btn>
                             <v-divider class="mx-3 my-5"></v-divider>
 
                             <v-avatar v-for="(list, index) in lists" :key="index" class="d-block text-center mx-auto mb-9" color="grey lighten-1" size="55">
                                 <img alt="Avatar" class="list-icon" :src="listIconUrl+list.id+'.png'" />
-                                <!-- <v-icon
-                            v-else
-                            :color="message.color"
-                            v-text="message.icon"
-                          ></v-icon>
-            -->
-
                             </v-avatar>
                         </v-sheet>
                     </v-col>
@@ -64,8 +56,8 @@
                     </v-col>
                 </v-row>
             </v-container>
-            <PostModal v-model="isPostModal"/>
-            <ListPostModal v-model="isListPostModal"/>
+            <PostModal v-model="isPostModal" :zIndex="10000" />
+            <ListPostModal v-model="isListPostModal" :zIndex="10000" />
         </v-main>
     </v-app>
 </template>
@@ -90,8 +82,8 @@
         },
         data: () => ({
             listIconUrl: 'http://localhost:8000/img/list_icon/',
-            isPostModal:false,
-            isListPostModal:true,
+            isPostModal: false,
+            isListPostModal: true,
             links: [{
                     name: 'Home',
                     link: '/main',
@@ -270,12 +262,13 @@
         -webkit-backdrop-filter: blur(5.0px);
         border-radius: 10px;
         border: 1px solid rgba(255, 255, 255, 0.18);
-        
+
         .list-basic-container {
             display: flex;
             justify-content: space-between;
-            width:100%;
-            div{
+            width: 100%;
+
+            div {
                 display: flex;
                 flex-direction: row;
             }
@@ -339,67 +332,69 @@
                         transform-origin: 0% 0%;
                     }
                 }
-            
 
-            &:hover {
-                span{
-                    &:before {
-                        width: 5px;
-                        transition: width 100ms ease;
-                    }
 
-                    &:after {
-                        width: 10px;
-                        transition: width 150ms ease 100ms;
+                &:hover {
+                    span {
+                        &:before {
+                            width: 5px;
+                            transition: width 100ms ease;
+                        }
+
+                        &:after {
+                            width: 10px;
+                            transition: width 150ms ease 100ms;
+                        }
                     }
                 }
-            }
             }
 
             input[type="checkbox"] {
                 display: none; // hide the system checkbox
 
-              // Let's add some effects after the checkbox is checked
+                // Let's add some effects after the checkbox is checked
 
-              &:checked {
-                + label {
-                  span {
-                    background-color: #212226;
-                    transform: scale(1.25); // enlarge the box
+                &:checked {
+                    +label {
+                        span {
+                            background-color: #212226;
+                            transform: scale(1.25); // enlarge the box
 
-                    &:after {
-                      width: 10px;
-                      background: #1790b5;
-                      transition: width 150ms ease 100ms; // enlarge the tick
+                            &:after {
+                                width: 10px;
+                                background: #1790b5;
+                                transition: width 150ms ease 100ms; // enlarge the tick
+                            }
+
+                            &:before {
+                                width: 5px;
+                                background: #1790b5;
+                                transition: width 150ms ease 100ms; // enlarge the tick
+                            }
+                        }
+
+                        &:hover {
+
+                            // copy the states for onMouseOver to avoid flickering
+                            span {
+                                background-color: #212226;
+                                transform: scale(1.25); // enlarge the box
+
+                                &:after {
+                                    width: 10px;
+                                    background: #1790b5;
+                                    transition: width 150ms ease 100ms; // enlarge the tick
+                                }
+
+                                &:before {
+                                    width: 5px;
+                                    background: #1790b5;
+                                    transition: width 150ms ease 100ms; // enlarge the tick
+                                }
+                            }
+                        }
                     }
-
-                    &:before {
-                      width: 5px;
-                      background: #1790b5;
-                      transition: width 150ms ease 100ms; // enlarge the tick
-                    }
-                  }
-
-                  &:hover { // copy the states for onMouseOver to avoid flickering
-                    span {
-                      background-color: #212226;
-                      transform: scale(1.25); // enlarge the box
-
-                      &:after {
-                        width: 10px;
-                        background: #1790b5;
-                        transition: width 150ms ease 100ms; // enlarge the tick
-                      }
-
-                      &:before {
-                        width: 5px;
-                        background: #1790b5;
-                        transition: width 150ms ease 100ms; // enlarge the tick
-                      }
-                    }  
-                  }
                 }
-              }
             }
         }
     }

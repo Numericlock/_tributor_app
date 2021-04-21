@@ -1,18 +1,19 @@
 <template>
     <div class="wrapper">
+        <CropperModal @result="setListIcon"/>
         <transition name="first">
-            <div class="modal-background" v-if="value" >
-            </div>
+            <ModalBackground :zIndex="zIndex" v-if="value" @click.native="modalAttention()"/>
         </transition>
         <transition name="first">
-            <div class="modal" v-if="modal && value">
+            <div class="modal" v-if="modal && value" :style="{'z-index':zIndex}">
                 <div class="modal-container">
                     <div class="modal-header">
                         <div>リストを追加する</div>
-                        <v-icon class="close-icon">mdi-close</v-icon>
+                        <v-icon class="close-icon" @click="modalAttention()">mdi-close</v-icon>
                     </div>
                     <div class="basic-input">
                         <v-avatar color="grey lighten-1 my-auto" size="55">
+                            <img :src="listIcon" />
                         </v-avatar>
                         <v-text-field class="mt-7 ml-3" label="List Name" v-model="listName" solo></v-text-field>
                         <div class="checkbox-wrapper">
@@ -82,21 +83,28 @@
                 </div>
             </div>
         </transition>
-        <AttentionModal text="内容が削除されます" />
+        <AttentionModal :zIndex="zIndex" text="内容が削除されます" @submit="modalRemove()" v-model="isAttention"/>
     </div>
 </template>
 
 <script>
+    import ModalBackground from '~/components/ModalBackground.vue'
     import AttentionModal from '~/components/AttentionModal.vue'
+    import CropperModal from '~/components/CropperModal.vue'
+
     export default {
         props: {
             value: {
                 default: false,
-            }
+            },
+            zIndex:{
+                default:1000
+            },
         },
         data() {
             return {
                 modal: true,
+                isAttention: false,
                 userIconUrl: "http://localhost:8000/img/icon_img/",
                 searchStr: '',
                 searchTimer: null,
@@ -104,10 +112,13 @@
                 SearchUsers: [],
                 listedUsers: [],
                 isPublish:true,
+                listIcon:null,
             }
         },
         components: {
+            ModalBackground,
             AttentionModal,
+            CropperModal,
         },
         computed: {
             search: {
@@ -134,6 +145,9 @@
             },
             removeListedUsers(index){
                 this.listedUsers.splice(index,1);
+            },
+            setListIcon(icon){
+                this.listIcon = icon;
             },
             postValidate(){
                 if(this.listName.trim() && typeof(this.isPublish) == "boolean") return true;
@@ -170,6 +184,10 @@
                     //this.modalRemove();
                 }
             },
+            modalAttention() {
+                if (this.postValidate()) this.isAttention = true;
+                else this.modalRemove();
+            },     
             modalRemove() {
                 this.listName = '';
                 this.isPublish = true;
@@ -224,39 +242,11 @@
         opacity: 0 !important;
     }
 
-    .my-auto {
-        margin-top: 20px
-    }
-
-    .modal-background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(255, 255, 255, 0.8);
-        background-blend-mode: lighten;
-        z-index: 10000;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        opacity: .9;
-    }
-
-    .attention-modal-background {
-        z-index: 10002;
-    }
-
     .modal {
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        z-index: 10001;
-    }
-
-    .attention-modal {
-        z-index: 10002;
     }
 
     .modal-container {

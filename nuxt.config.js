@@ -32,9 +32,9 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-      '~/plugins/axios',
-      '~/plugins/vue-cropperjs',
-      '~/plugins/v-scroll-lock',
+      {src:'~/plugins/axios'},
+      {src:'@/plugins/vue-cropperjs', mode: 'client'},
+      {src:'~/plugins/v-scroll-lock', mode: 'client'},
   ],
   /*
   ** Nuxt.js dev-modules
