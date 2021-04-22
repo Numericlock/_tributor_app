@@ -8,7 +8,7 @@
                     <v-col xl=2 lg=2 md=2 sm=2 cols=1>
                         <v-sheet min-height="97vh" min-width="90px">
                             <v-list shaped>
-                                <v-list-item v-for="(link, index) in links" :key="index" link class="my-5">
+                                <v-list-item v-for="(link, index) in links" :key="index" link router exact :to="link.link" class="my-5">
                                     <v-list-item-content class="hidden-md-and-down">
                                         <v-list-item-title>{{ link.name }}</v-list-item-title>
                                     </v-list-item-content>
@@ -83,10 +83,10 @@
         data: () => ({
             listIconUrl: 'http://localhost:8000/img/list_icon/',
             isPostModal: false,
-            isListPostModal: true,
+            isListPostModal: false,
             links: [{
                     name: 'Home',
-                    link: '/main',
+                    link: '/home',
                     icon: 'mdi-home',
                     current: false
                 },
@@ -110,7 +110,7 @@
                 },
                 {
                     name: 'Lists',
-                    link: '/main',
+                    link: '/lists',
                     icon: 'mdi-text-box-outline',
                     current: false
                 },

@@ -1,8 +1,7 @@
 <template>
     <div class="wrapper">
-        <CropperModal @result="setListIcon"/>
         <transition name="first">
-            <ModalBackground :zIndex="zIndex" v-if="value" @click.native="modalAttention()"/>
+            <ModalBackground :zIndex="zIndex" v-if="value" @click.native="modalAttention()" />
         </transition>
         <transition name="first">
             <div class="modal" v-if="modal && value" :style="{'z-index':zIndex}">
@@ -12,16 +11,19 @@
                         <v-icon class="close-icon" @click="modalAttention()">mdi-close</v-icon>
                     </div>
                     <div class="basic-input">
-                        <v-avatar color="grey lighten-1 my-auto" size="55">
-                            <img :src="listIcon" />
+                        <v-avatar color="grey lighten-1 my-auto" size="55" @mouseover="isIconHover = true" @mouseleave="isIconHover = false">
+                            <img :src="listIcon" v-if="listIcon"/>
+                            <v-icon color="white" v-else>mdi-image-plus</v-icon>
+                            <transition name="first">
+                                <label class="hover-pencil my-auto" for="icon_input" v-if="isIconHover">
+                                    <v-icon color="white">mdi-pencil</v-icon>
+                                    <input id="icon_input" class="icon-input" type="file" :accept="allowedExtensions.join(',')" @change="iconChange" />
+                                </label>
+                            </transition>
                         </v-avatar>
                         <v-text-field class="mt-7 ml-3" label="List Name" v-model="listName" solo></v-text-field>
                         <div class="checkbox-wrapper">
-                            <v-simple-checkbox
-                              v-model="isPublish"
-                              color="green"
-                              class="pl-2 mt-7"
-                            ></v-simple-checkbox>
+                            <v-simple-checkbox v-model="isPublish" color="green" class="pl-2 mt-7"></v-simple-checkbox>
                             <label>{{checkboxLabel}}</label>
                         </div>
                     </div>
@@ -31,15 +33,15 @@
                             <transition-group name="first">
                                 <div class="listed-user-container dark" v-for="(user, index) in listedUsers" :key="user.id">
                                     <v-avatar color="grey lighten-1 my-3 mx-2" size="55">
-                                         <img :src="userIconUrl+user.id+'.png'"/>
+                                        <img :src="userIconUrl+user.id+'.png'" />
                                     </v-avatar>
                                     <v-divider vertical></v-divider>
                                     <div class="listed-user-basic">
                                         <div class="user-name">{{user.name}}</div>
                                         <div class="user-id">@{{user.id}}</div>
                                     </div>
-                                    <v-btn  class="close-icon  my-auto mr-3" @click="removeListedUsers(user,index)" fab small icon >
-                                        <v-icon color="red"  >mdi-close</v-icon>
+                                    <v-btn class="close-icon  my-auto mr-3" @click="removeListedUsers(user,index)" fab small icon>
+                                        <v-icon color="red">mdi-close</v-icon>
                                     </v-btn>
                                 </div>
                             </transition-group>
@@ -61,15 +63,15 @@
                                 <transition-group name="first">
                                     <div class="result-user-container dark" v-for="(user, index) in SearchUsers" :key="user.user_id">
                                         <v-avatar color="grey lighten-1 my-3 mx-2" size="55">
-                                            <img :src="userIconUrl+user.user_id+'.png'"/>
+                                            <img :src="userIconUrl+user.user_id+'.png'" />
                                         </v-avatar>
                                         <v-divider vertical></v-divider>
                                         <div class="result-user-basic">
                                             <div class="user-name">{{user.user_name}}</div>
                                             <div class="user-id">@{{user.user_id}}</div>
                                         </div>
-                                        <v-btn  class="plus-icon  my-auto mr-3" @click="addListedUsers(user,index)" fab small icon >
-                                            <v-icon color="green"  >mdi-plus</v-icon>
+                                        <v-btn class="plus-icon  my-auto mr-3" @click="addListedUsers(user,index)" fab small icon>
+                                            <v-icon color="green">mdi-plus</v-icon>
                                         </v-btn>
 
                                     </div>
@@ -83,7 +85,8 @@
                 </div>
             </div>
         </transition>
-        <AttentionModal :zIndex="zIndex" text="内容が削除されます" @submit="modalRemove()" v-model="isAttention"/>
+        <AttentionModal :zIndex="zIndex" text="内容が削除されます" @submit="modalRemove()" v-model="isAttention" />
+        <CropperModal @result="setListIcon" v-model="isIconInput" :url="iconUrl" :zIndex="zIndex" />
     </div>
 </template>
 
@@ -97,22 +100,26 @@
             value: {
                 default: false,
             },
-            zIndex:{
-                default:1000
+            zIndex: {
+                default: 1000
             },
         },
         data() {
             return {
                 modal: true,
                 isAttention: false,
+                isIconInput: false,
+                isIconHover:false,
                 userIconUrl: "http://localhost:8000/img/icon_img/",
                 searchStr: '',
                 searchTimer: null,
-                listName:'',
+                listName: '',
                 SearchUsers: [],
                 listedUsers: [],
-                isPublish:true,
-                listIcon:null,
+                isPublish: true,
+                iconUrl: null,
+                listIcon: null,
+                allowedExtensions: ['image/jpeg', 'image/png'],
             }
         },
         components: {
@@ -127,33 +134,47 @@
                 },
                 async set(value) {
                     this.searchStr = value;
-                    if(this.searchTimer) clearTimeout(this.searchTimer);
+                    if (this.searchTimer) clearTimeout(this.searchTimer);
                     this.searchTimer = window.setTimeout(this.searchPost, 700);
                 }
             },
-            checkboxLabel(){
-                 return (this.isPublish ? '公開'　:　'非公開');
+            checkboxLabel() {
+                return (this.isPublish ? '公開' : '非公開');
             },
         },
         methods: {
             handle(bool) {
                 this.$emit('input', bool)
             },
-            addListedUsers(user,index){
-                this.SearchUsers.splice(index,1);
-                this.listedUsers.push({id:user.user_id,name:user.user_name});
+            addListedUsers(user, index) {
+                this.SearchUsers.splice(index, 1);
+                this.listedUsers.push({
+                    id: user.user_id,
+                    name: user.user_name
+                });
             },
-            removeListedUsers(index){
-                this.listedUsers.splice(index,1);
+            removeListedUsers(index) {
+                this.listedUsers.splice(index, 1);
             },
-            setListIcon(icon){
+            iconChange(e) {
+                const files = e.target.files
+                if (!files || !files.length) return
+
+                const reader = new FileReader()
+                reader.onload = (ev) => {
+                    this.iconUrl = ev.target.result;
+                    this.isIconInput = true;
+                }
+                reader.readAsDataURL(files[0])
+            },
+            setListIcon(icon) {
                 this.listIcon = icon;
             },
-            postValidate(){
-                if(this.listName.trim() && typeof(this.isPublish) == "boolean") return true;
+            postValidate() {
+                if (this.listName.trim() && typeof(this.isPublish) == "boolean") return true;
                 else return false;
             },
-            async searchPost(){
+            async searchPost() {
                 const data = {
                     str: this.searchStr
                 };
@@ -161,34 +182,37 @@
                     .catch(err => {
                         console.log(err)
                     })
-                if(this.listedUsers.length != 0){
-                    for(let i=0;i<response.length;i++){
+                if (this.listedUsers.length != 0) {
+                    for (let i = 0; i < response.length; i++) {
                         let flag = false;
-                        for(let k=0;k<this.listedUsers.length;k++){
-                            if(!flag)if(response[i].user_id == this.listedUsers[k].id) flag = true;
+                        for (let k = 0; k < this.listedUsers.length; k++) {
+                            if (!flag)
+                                if (response[i].user_id == this.listedUsers[k].id) flag = true;
                         }
-                        if(!flag) this.SearchUsers.push(response[i]);
+                        if (!flag) this.SearchUsers.push(response[i]);
                     }
-                }else this.SearchUsers = response;
+                } else this.SearchUsers = response;
             },
             async postRequest() {
                 if (this.postValidate()) {
                     let userIds = [];
-                    if(this.listedUsers.length != 0 ) userIds = this.listedUsers.map(user => user.id);
+                    if (this.listedUsers.length != 0) userIds = this.listedUsers.map(user => user.id);
                     var data = {
                         name: this.listName,
+                        icon: this.listIcon,
                         publish: this.isPublish,
                         users: userIds,
                     };
                     await this.$store.dispatch('list/create', data)
-                    //this.modalRemove();
+                    this.modalRemove();
                 }
             },
             modalAttention() {
                 if (this.postValidate()) this.isAttention = true;
                 else this.modalRemove();
-            },     
+            },
             modalRemove() {
+                this.listIcon = null;
                 this.listName = '';
                 this.isPublish = true;
                 this.listedUsers = [];
@@ -287,9 +311,24 @@
         .basic-input {
             display: flex;
             flex-direction: row;
-            height:100px;
-            .checkbox-wrapper{
-                width:80px;
+            height: 100px;
+            .hover-pencil{
+                position: absolute;
+                width:100%;
+                height:100%;
+                border-radius: 100%;
+                background: rgba(62, 62, 62, 0.50);
+                box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+                backdrop-filter: blur(5.0px);
+                -webkit-backdrop-filter: blur(5.0px);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+            }
+            .icon-input {
+                display: none;
+            }
+
+            .checkbox-wrapper {
+                width: 80px;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -299,7 +338,7 @@
         .member-input {
             display: flex;
             flex-direction: row;
-            height:100%;
+            height: 100%;
             max-height: calc(100% - 200px);
 
             .listed-members-wrapper {
@@ -365,7 +404,7 @@
 
                 .search-box {
                     position: sticky;
-                    height:60px;
+                    height: 60px;
                     top: 8px;
                     z-index: 10002;
                 }
@@ -374,7 +413,8 @@
                     display: flex;
                     flex-direction: column;
                     justify-content: flex-start;
-                    height:100%;
+                    height: 100%;
+
                     .result-user-container {
                         display: flex;
                         flex-direction: row;

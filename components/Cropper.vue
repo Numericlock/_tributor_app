@@ -3,7 +3,7 @@
   <div id="Cropper" ref="Cropper" :class="['a--crop', customClass]" />
 </template>
 
-<script lang="ts">
+<script>
 // デフォルトのCSS, croppieと型定義を読み込みます
 import 'croppie/croppie.css'
 import Croppie from 'croppie'
@@ -131,12 +131,16 @@ export default {
 .a--crop {
   // デフォルトのCSSを上書きすることができます
   // お好みに合わせてどうぞ
-
+    .cr-boundary{
+        
+    }
   // スライダーの横幅
   .cr-slider-wrap {
     width: 100%;
   }
-
+    .croppie-container{
+        box-shadow: none !important;
+    }
   // スライダーのデザイン
   .cr-slider[type='range'] {
     appearance: none;
