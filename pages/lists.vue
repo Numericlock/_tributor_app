@@ -41,9 +41,11 @@
         async fetch({
             store
         }) {
-            const list = await store.dispatch('list/fetchList')
-            // console.log("u?:"+list);
-            store.commit('list/setList', list)
+            if(!store.getters['list/list']){
+                const list = await store.dispatch('list/fetchList')
+                // console.log("u?:"+list);
+                store.commit('list/setList', list)
+            }
         },
         components: {
             modal

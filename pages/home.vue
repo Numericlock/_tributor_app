@@ -17,14 +17,14 @@
                 <v-carousel-item :src="postImageUrl+post.id+'_0.png'" @click="imageZoom(postImageUrl+post.id+'_0.png')"></v-carousel-item>
             </v-carousel>
         </div>
-        <div class="image-modal-background" v-if="selectedImage" @click.stop="selectedImage = null" :style="'backgroundImage:url('+ selectedImage +');'">
-            <v-btn class="d-block image-modal-close-button" fab color="white" @click.stop = "selectedImage = null">
-                <v-icon>mdi-close</v-icon>
-            </v-btn>    
+        <div class="image-modal-background" v-if="selectedImage" @click.stop="selectedImage = null" :style="'backgroundImage:url('+ selectedImage +');'">   
         </div>
         <div class="image-modal" v-if="selectedImage">
             <img :src="selectedImage" alt="" height="980vh" width="auto" />
         </div>
+        <v-btn class="d-block image-modal-close-button" fab color="white"  v-if="selectedImage" @click.stop = "selectedImage = null">
+            <v-icon>mdi-close</v-icon>
+        </v-btn> 
     </section>
 </template>
 
@@ -38,9 +38,11 @@
         async fetch({
             store
         }) {
-            const home = await store.dispatch('home/fetchList')
-            console.log(home);
-            store.commit('home/setList', home)
+            if(!store.getters['home/list']){
+                const home = await store.dispatch('home/fetchList')
+                console.log(home);
+                store.commit('home/setList', home)
+            }
         },
         components: {
             modal
@@ -147,14 +149,13 @@
         background-repeat: no-repeat;
         background-size: cover;
         opacity: .9;
-        .image-modal-close-button{
-            z-index: 11400;
-            position: fixed;
-            top:30px;
-            right:30px;
-        }
     }
-
+    .image-modal-close-button{
+        z-index: 11400;
+        position: fixed;
+        top:30px;
+        right:30px;
+    }
     .image-modal-background::before {
         background: inherit;
         content: '';

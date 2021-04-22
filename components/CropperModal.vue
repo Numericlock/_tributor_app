@@ -1,22 +1,26 @@
 <template>
     <div>
-        <ModalBackground :zIndex="zIndex" v-if="value" @click.native="modalAttention()"/>
-        <div class="cropper-modal" v-show="value" :style="{'z-index':zIndex}">
-            <div class="cropper-modal__content">
-                <div class="cropper-modal__cropper-wrapper">
-                    <!-- ref="CropperModal"は必須 -->
-                    <Cropper ref="CropperModal" enable-orientation :boundary="{ width: 200, height: 200 }" :viewport="{ width: 200, height: 200, type: 'circle' }" />
-                </div>
+        <transition name="first">
+            <ModalBackground :zIndex="zIndex" v-if="value" @click.native="modalAttention()" />
+        </transition>
+        <transition name="first">
+            <div class="cropper-modal" v-show="value" :style="{'z-index':zIndex}">
+                <div class="cropper-modal__content">
+                    <div class="cropper-modal__cropper-wrapper">
+                        <!-- ref="CropperModal"は必須 -->
+                        <Cropper ref="CropperModal" enable-orientation :boundary="{ width: 200, height: 200 }" :viewport="{ width: 200, height: 200, type: 'circle' }" />
+                    </div>
 
-                <!-- この後ろはボタン類などの飾り・非本質 -->
-                <div class="cropper-modal__items">
-                    <v-icon large @click="handleRotate(90)">mdi-rotate-left</v-icon>
-                    <v-icon large @click="handleRotate(-90)">mdi-rotate-right</v-icon>
+                    <!-- この後ろはボタン類などの飾り・非本質 -->
+                    <div class="cropper-modal__items">
+                        <v-icon large @click="handleRotate(90)">mdi-rotate-left</v-icon>
+                        <v-icon large @click="handleRotate(-90)">mdi-rotate-right</v-icon>
+                    </div>
+                    <v-btn class="mt-3" @click.prevent="modalSubmit">適応</v-btn>
                 </div>
-                <v-btn class="mt-3" @click.prevent="modalSubmit">適応</v-btn>
             </div>
-        </div>
-        <AttentionModal :zIndex="zIndex" text="内容が削除されます" @submit="modalRemove()" v-model="isAttention"/>
+        </transition>
+        <AttentionModal :zIndex="zIndex" text="内容が削除されます" @submit="modalRemove()" v-model="isAttention" />
     </div>
 </template>
 
@@ -34,15 +38,15 @@
         },
         props: {
             value: {
-                type : Boolean,
+                type: Boolean,
                 default: false,
             },
             url: {
-                default : 'http://i.imgur.com/fHNtPXX.jpg',
+                default: 'http://i.imgur.com/fHNtPXX.jpg',
             },
-            zIndex:{
-                type : Number,
-                default : 1000,
+            zIndex: {
+                type: Number,
+                default: 1000,
             }
         },
         data() {
@@ -59,17 +63,18 @@
         },
 
         mounted() {
-            
+
         },
 
         methods: {
             initialize() {
                 // 一番最初にセットする画像のURL / 本来ならばユーザーのサムネイルなど
                 var url;
-                if(this.url) url = this.url;
+                if (this.url) url = this.url;
                 else url = this.defaultImage;
 
-                ;(this.$refs.CropperModal)
+                ;
+                (this.$refs.CropperModal)
                 .bind({
                         url,
                     })
@@ -88,7 +93,8 @@
 
                 const reader = new FileReader()
                 reader.onload = (ev) => {
-                    ;(this.$refs.CropperModal).bind({
+                    ;
+                    (this.$refs.CropperModal).bind({
                         url: ev.target.result,
                     })
                 }
@@ -120,7 +126,8 @@
             },
             handleRefresh() {
                 // 初期状態に戻す
-                ;(this.$refs.CropperModal).refresh()
+                ;
+                (this.$refs.CropperModal).refresh()
                 this.initialize()
             },
             handleClick() {
@@ -129,19 +136,19 @@
             modalAttention() {
                 this.isAttention = true;
                 //this.modalRemove();
-            }, 
-            modalRemove(){
+            },
+            modalRemove() {
                 this.url = null;
                 this.handle(false);
             },
-            modalSubmit(){
+            modalSubmit() {
                 this.handleCrop();
                 this.modalRemove();
             }
 
         },
         watch: {
-            url: function (val, oldVal){
+            url: function(val, oldVal) {
                 this.initialize();
             }
         }
@@ -149,20 +156,33 @@
 </script>
 
 <style lang="scss" scoped>
+    .first-leave-active,
+    .first-enter-active {
+        opacity: 1 !important;
+        transition: all 200ms;
+    }
+
+    /* 表示アニメーション */
+    .first-enter,
+    .first-leave-to {
+        opacity: 0 !important;
+    }
     .cropper-modal {
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background:none !important;
-        opacity:1 !important;
+        background: none !important;
+        opacity: 1 !important;
+        min-width: 200px;
+        max-width: 400px;
+        min-height: 150px;
+
         &__content {
             display: flex;
             flex-direction: column;
             text-align: center;
             width: auto;
-            min-width: 200px;
-            min-height: 150px;
             justify-content: space-around;
             max-height: 95vh;
             color: #ddd;
@@ -173,17 +193,17 @@
             -webkit-backdrop-filter: blur(5.0px);
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.18);
-            
+
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-direction: column;
         }
-        &__cropper-wrapper{
-            
-        }
-        &__items{
-            width:100%;
+
+        &__cropper-wrapper {}
+
+        &__items {
+            width: 100%;
             display: flex;
             flex-direction: row;
             justify-content: space-around;
