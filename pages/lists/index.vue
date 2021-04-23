@@ -1,6 +1,6 @@
 <template>
     <section class="lists-wrapper overflow-y-auto">
-        <div class="list-container" v-for="list in lists">
+        <NuxtLink :to="{name: 'lists-id', params: {id: list.id}}" class="list-container" v-for="(list, index) in lists" :key="index">
             <div class="list-basic-container">
                 <v-avatar size="55">
                     <img alt="Avatar" class="list-icon" :src="listIconUrl+list.id+'.png'" />
@@ -27,7 +27,7 @@
                 </v-avatar>
     
             </div>
-        </div>
+        </NuxtLink>
     </section>
 </template>
 
@@ -38,15 +38,6 @@
         //layout: 'home',
 
         layout: 'main2',
-        async fetch({
-            store
-        }) {
-            if(!store.getters['list/list']){
-                const list = await store.dispatch('list/fetchList')
-                // console.log("u?:"+list);
-                store.commit('list/setList', list)
-            }
-        },
         components: {
             modal
         },
@@ -100,6 +91,8 @@
     .list-container {
         display: flex;
         flex-direction: column;
+        text-decoration: none;
+        color:#ddd;
         padding: 20px 30px;
         background: rgba(62, 62, 62, 0.50);
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);

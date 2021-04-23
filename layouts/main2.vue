@@ -72,9 +72,11 @@
         async fetch({
             store
         }) {
-            const list = await store.dispatch('list/fetchList')
-            //console.log("u?:"+list);
-            store.commit('list/setList', list)
+            const list = await store.dispatch('list/fetchList');
+            store.commit('list/setList', list);
+            //const home = await store.dispatch('home/fetchList');
+            //store.commit('home/setList', home);
+            //console.log(home);
         },
         components: {
             PostModal,

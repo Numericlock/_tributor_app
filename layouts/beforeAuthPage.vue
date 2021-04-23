@@ -2,11 +2,11 @@
     <v-app>
         <div class="toppage-wrapper">
             <wave/>
-            <v-content>
+            <v-main>
                 <v-container>
                     <nuxt />
                 </v-container>
-            </v-content>
+            </v-main>
         </div>
     </v-app>
 </template>

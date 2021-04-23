@@ -31,18 +31,18 @@
 <script>
     import modal from '~/components/Modal.vue'
     export default {
-        //middleware: 'not_logined_user',
-        //layout: 'home',
-        
         layout: 'main2',
         async fetch({
             store
         }) {
-            if(!store.getters['home/list']){
+            const length = Object.keys(store.getters['home/list']).length;
+            console.log("length:"+length);
+            if(length == 0){
+                console.log("fetch");
                 const home = await store.dispatch('home/fetchList')
-                console.log(home);
                 store.commit('home/setList', home)
             }
+
         },
         components: {
             modal
