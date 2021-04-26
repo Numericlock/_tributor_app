@@ -12,7 +12,7 @@
                     </div>
                     <div class="basic-input">
                         <v-avatar color="grey lighten-1 my-auto" size="55" @mouseover="isIconHover = true" @mouseleave="isIconHover = false">
-                            <img :src="listIcon" v-if="listIcon"/>
+                            <img :src="listIcon" v-if="listIcon" />
                             <v-icon color="white" v-else>mdi-image-plus</v-icon>
                             <transition name="first">
                                 <label class="hover-pencil my-auto" for="icon_input" v-if="isIconHover">
@@ -109,7 +109,7 @@
                 modal: true,
                 isAttention: false,
                 isIconInput: false,
-                isIconHover:false,
+                isIconHover: false,
                 userIconUrl: "http://localhost:8000/img/icon_img/",
                 searchStr: '',
                 searchTimer: null,
@@ -312,10 +312,11 @@
             display: flex;
             flex-direction: row;
             height: 100px;
-            .hover-pencil{
+
+            .hover-pencil {
                 position: absolute;
-                width:100%;
-                height:100%;
+                width: 100%;
+                height: 100%;
                 border-radius: 100%;
                 background: rgba(62, 62, 62, 0.50);
                 box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
@@ -323,6 +324,7 @@
                 -webkit-backdrop-filter: blur(5.0px);
                 border: 1px solid rgba(255, 255, 255, 0.18);
             }
+
             .icon-input {
                 display: none;
             }

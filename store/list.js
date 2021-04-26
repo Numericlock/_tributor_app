@@ -43,6 +43,15 @@ export const actions = {
                 console.log(err)
             })
     },
+    async read({
+        commit
+    }, data)  {
+        console.log(data);
+        return await this.$axios.$get('/lists/'+data.id)
+            .catch(err => {
+                console.log(err)
+            })
+    },
     async create({
         commit
     }, data) {
