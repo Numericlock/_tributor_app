@@ -12,20 +12,10 @@
                     </v-icon>
                 </v-btn>
             </div>
-            <div class="user-icon-container">
-                <v-avatar size="45">
-                    <img alt="Avatar" class="list-icon" :src="listIconUrl+list.id+'.png'" />
-                </v-avatar>
-                <v-avatar size="45">
-                    <img alt="Avatar" class="list-icon" :src="listIconUrl+list.id+'.png'" />
-                </v-avatar>
-                <v-avatar size="45">
-                    <img alt="Avatar" class="list-icon" :src="listIconUrl+list.id+'.png'" />
-                </v-avatar>
-                <v-avatar size="45">
-                    <img alt="Avatar" class="list-icon" :src="listIconUrl+list.id+'.png'" />
-                </v-avatar>
-    
+            <div class="user-icon-container" v-if="list.users">
+                <v-avatar size="45" class="mr-1" v-for="user in listUsers(list.users)">
+                    <img alt="Avatar" class="user-icon" :src="userIconUrl+user+'.png'" />
+                </v-avatar> 
             </div>
         </NuxtLink>
     </section>
@@ -49,12 +39,18 @@
             scroll: 0, //スクロール量
             BottomPosition: 0,
             homeWrapper: null,
-
         }),
         computed: {
             lists() {
-                //console.log("e?:"+this.$store.getters['list/list']);
                 return this.$store.getters['list/list']
+            },
+            listUsers(users) {
+                var that = this;
+                return function(users) {
+                    const result = users.split('::::');
+                    
+                    return result;
+                }
             },
         },
         methods: {

@@ -16,6 +16,20 @@
             <v-carousel class="post-carousel" :show-arrows="false" hide-delimiters v-if="post.attached_count == 1" height="auto">
                 <v-carousel-item :src="postImageUrl+post.id+'_0.png'" @click="imageZoom(postImageUrl+post.id+'_0.png')"></v-carousel-item>
             </v-carousel>
+            <div class="post-icons">
+                <v-btn class="post-icons__reply" icon fab>
+                    <v-icon>mdi-message-reply-text</v-icon>
+                    <span v-show="post.comment_count">{{post.comment_count}}</span>
+                </v-btn> 
+                <v-btn class="post-icons__retribute" icon fab>
+                    <v-icon>mdi-bullhorn</v-icon>
+                    <span v-show="post.retribute_count">{{post.retribute_count}}</span>
+                </v-btn> 
+                <v-btn class="post-icons__like" icon fab>
+                    <v-icon>mdi-heart</v-icon>
+                    <span v-show="post.favorite_count">{{post.favorite_count}}</span>
+                </v-btn> 
+            </div>
         </div>
         <div class="image-modal-background" v-if="selectedImage" @click.stop="selectedImage = null" :style="'backgroundImage:url('+ selectedImage +');'">   
         </div>
@@ -133,6 +147,20 @@
 
     .post-carousel {
         height: auto !important;
+    }
+    .post-icons{
+        display:flex;
+        flex-direction: row;
+        justify-content: space-around;
+        &__reply:hover .v-icon{
+            color:#487AB9;
+        }
+        &__retribute:hover .v-icon{
+            color:#F6EC5F;
+        }
+        &__like:hover .v-icon{
+            color:#DD4F40;
+        }
     }
 
     /////////modal/////////
