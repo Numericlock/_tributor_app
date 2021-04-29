@@ -1,5 +1,5 @@
 <template>
-    <div class="post-container" v-for="post in posts">
+    <div class="post-container">
         <div class="user-wrapper">
             <v-avatar class="d-block text-center" color="grey lighten-1" size=55>
                 <img alt="Avatar" class="user-icon" :src="userIconUrl+post.post_user_id+'.png'" />
@@ -34,13 +34,67 @@
 
 <script>
     export default {
-        data() {
-            return {}
+        props:{
+            post:{
+                default:null
+            }
         },
-        components: {}
+        data: () => ({
+            userIconUrl: "http://localhost:8000/img/icon_img/",
+            postImageUrl: "http://localhost:8000/img/post_img/",
+            selectedImage: null,
+            scroll:0,//スクロール量
+            BottomPosition:0,
+            homeWrapper:null,
+
+        }),
+        components: {},
+        methods: {
+            imageZoom(url) {
+                this.$emit('input', url)
+            },
+        }
     }
 </script>
 
-<style>
+<style lang="scss" scoped>
+    .home-wrapper {
+        display: flex;
+        flex-direction: column;
+        max-height: calc(97vh - 50px);
+    }
 
+    .post-container {
+        display: flex;
+        flex-direction: column;
+        padding: 20px 30px;
+        background: rgba(62, 62, 62, 0.50);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        backdrop-filter: blur(5.0px);
+        -webkit-backdrop-filter: blur(5.0px);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+
+        .user-wrapper {
+            display: flex;
+        }
+    }
+
+    .post-carousel {
+        height: auto !important;
+    }
+    .post-icons{
+        display:flex;
+        flex-direction: row;
+        justify-content: space-around;
+        &__reply:hover .v-icon{
+            color:#487AB9;
+        }
+        &__retribute:hover .v-icon{
+            color:#F6EC5F;
+        }
+        &__like:hover .v-icon{
+            color:#DD4F40;
+        }
+    }
 </style>

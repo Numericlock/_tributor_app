@@ -1,5 +1,7 @@
 <template>
     <section class="home-wrapper overflow-y-auto" @scroll="getScrollParam" ref="homeWrapper">
+        <Posts :posts = "posts"/>
+  <!--
         <div class="post-container" v-for="post in posts">
             <div class="user-wrapper">
                 <v-avatar class="d-block text-center" color="grey lighten-1" size=55>
@@ -39,10 +41,12 @@
         <v-btn class="d-block image-modal-close-button" fab color="white"  v-if="selectedImage" @click.stop = "selectedImage = null">
             <v-icon>mdi-close</v-icon>
         </v-btn> 
+-->
     </section>
 </template>
 
 <script>
+    import Posts from '~/components/posts/Posts.vue'
     import modal from '~/components/Modal.vue'
     export default {
         layout: 'main2',
@@ -59,7 +63,8 @@
 
         },
         components: {
-            modal
+            modal,
+            Posts
         },
         data: () => ({
             userIconUrl: "http://localhost:8000/img/icon_img/",
@@ -84,7 +89,6 @@
         },
         methods: {
             imageZoom(url) {
-                console.log(url);
                 this.selectedImage = url;
             },
             getScrollParam:function(e){
@@ -127,6 +131,7 @@
         display: flex;
         flex-direction: column;
         max-height: calc(97vh - 50px);
+        overflow-x:hidden; 
     }
 
     .post-container {

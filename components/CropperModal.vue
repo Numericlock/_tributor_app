@@ -61,14 +61,8 @@
                 defaultImage: 'http://i.imgur.com/fHNtPXX.jpg',
             }
         },
-
-        mounted() {
-
-        },
-
         methods: {
             initialize() {
-                // 一番最初にセットする画像のURL / 本来ならばユーザーのサムネイルなど
                 var url;
                 if (this.url) url = this.url;
                 else url = this.defaultImage;
@@ -79,7 +73,6 @@
                         url,
                     })
                     .then(() => {
-                        // ここでスライダーの初期値をセットする（bindのあとにセットするのがポイント）
                         ;
                         (this.$refs.CropperModal).setZoom(this.initialZoomPoint)
                     })
@@ -162,7 +155,6 @@
         transition: all 200ms;
     }
 
-    /* 表示アニメーション */
     .first-enter,
     .first-leave-to {
         opacity: 0 !important;
