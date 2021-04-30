@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div v-for="post in posts">
+        <v-lazy v-for="(post, index) in posts">
             <Post v-model="selectedImage" :post="post"/>
-        </div>
+        </v-lazy>
         <ImageModal v-model="selectedImage"></ImageModal>
     </div>
 </template>
@@ -29,8 +29,16 @@
             Post,
             ImageModal
         },
+        computed: {
+            postsLength(){
+                return Object.keys(this.posts).length;
+            }
+        },
         watch: {
             selectedImage: function (val) {
+                console.log(val);
+            },
+            posts: function (val) {
                 console.log(val);
             }
         }

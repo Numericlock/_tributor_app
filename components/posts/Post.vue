@@ -16,17 +16,27 @@
             <v-carousel-item :src="postImageUrl+post.id+'_0.png'" @click="imageZoom(postImageUrl+post.id+'_0.png')"></v-carousel-item>
         </v-carousel>
         <div class="post-icons">
-            <v-btn class="post-icons__reply" icon fab>
+            <v-btn class="post-icons__reply" icon fab @click="reply()">
                 <v-icon>mdi-message-reply-text</v-icon>
                 <span v-show="post.comment_count">{{post.comment_count}}</span>
             </v-btn>
-            <v-btn class="post-icons__retribute" icon fab>
-                <v-icon>mdi-bullhorn</v-icon>
-                <span v-show="post.retribute_count">{{post.retribute_count}}</span>
+            
+            <v-btn class="post-icons__retribute" icon fab @click="removeRetribute()" v-if="isRetribute">
+                <v-icon color="#F6EC5F">mdi-bullhorn</v-icon>
+                <span v-show="retributeCount">{{retributeCount}}</span>
             </v-btn>
-            <v-btn class="post-icons__like" icon fab>
+            <v-btn class="post-icons__retribute" icon fab @click="retribute()" v-else>
+                <v-icon>mdi-bullhorn</v-icon>
+                <span v-show="retributeCount">{{retributeCount}}</span>
+            </v-btn>
+            
+            <v-btn class="post-icons__like" icon fab @click="removeLike()" v-if="isLike">
+                <v-icon color="#DD4F40">mdi-heart</v-icon>
+                <span v-show="likeCount">{{likeCount}}</span>
+            </v-btn>            
+            <v-btn class="post-icons__like" icon fab @click="like()" v-else>
                 <v-icon>mdi-heart</v-icon>
-                <span v-show="post.favorite_count">{{post.favorite_count}}</span>
+                <span v-show="likeCount">{{likeCount}}</span>
             </v-btn>
         </div>
     </div>
@@ -43,15 +53,84 @@
             userIconUrl: "http://localhost:8000/img/icon_img/",
             postImageUrl: "http://localhost:8000/img/post_img/",
             selectedImage: null,
-            scroll:0,//スクロール量
+            scroll:0,
             BottomPosition:0,
             homeWrapper:null,
+            localIsRetribute:null,
+            localIsLike:null,
 
         }),
         components: {},
+        computed: {
+            isRetribute(){
+                if(this.localIsRetribute == null) return this.post.is_retribute;
+                else return this.localIsRetribute;
+            },
+            retributeCount(){
+                let count = this.post.retribute_count;
+                if(this.post.is_retribute && this.localIsRetribute == false)count = count - 1;
+                else if(!this.post.is_retribute && this.localIsRetribute == true)count = count +1;
+                return count;
+            },
+            isLike(){
+                if(this.localIsLike == null) return this.post.is_favorite;
+                else return this.localIsLike;
+            },
+            likeCount(){
+                let count = this.post.favorite_count;
+                if(this.post.is_favorite && this.localIsLike == false)count = count - 1;
+                else if(!this.post.is_favorite && this.localIsLike == true)count = count +1;
+                return count;
+            },
+        },
         methods: {
             imageZoom(url) {
                 this.$emit('input', url)
+            },
+            async reply(){
+                const id = this.post.id;
+            },
+            async retribute(){
+                const data = {
+                    post_id: this.post.id
+                };
+                const response = await this.$axios.$post('/post/retribute', data)
+                    .catch(err => {
+                        console.log(err)
+                    })
+                this.localIsRetribute = true;
+            },
+            async removeRetribute(){
+                const data = {
+                    post_id: this.post.id
+                };
+                const response = await this.$axios.$post('/post/retribute/remove', data)
+                    .catch(err => {
+                        console.log(err)
+                    })
+                this.localIsRetribute = false;
+                
+            },
+            async like(){
+                const data = {
+                    post_id: this.post.id
+                };
+                const response = await this.$axios.$post('/post/like', data)
+                    .catch(err => {
+                        console.log(err)
+                    })
+                this.localIsLike = true;
+            },
+            async removeLike(){
+                const data = {
+                    post_id: this.post.id
+                };
+                const response = await this.$axios.$post('/post/like/remove', data)
+                    .catch(err => {
+                        console.log(err)
+                    })
+                this.localIsLike = false;
+                
             },
         }
     }
