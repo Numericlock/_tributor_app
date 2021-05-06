@@ -45,16 +45,6 @@
                                     </v-btn>
                                 </div>
                             </transition-group>
-                            <!--
-                            <span class="listed-user-container2 dark" v-for="n of 9" :key="n">
-                                <v-avatar color="grey lighten-1 my-auto" size="30">
-
-                                </v-avatar>
-                                
-                                <span class="user-id my-auto">@tessssssssssssssssssssssssssssstid</span>
-                                <v-icon class="close-icon my-auto mr-1" color="white">mdi-close</v-icon>
-                            </span>
--->
                         </div>
                         <v-divider vertical class="mx-1"></v-divider>
                         <div class="member-search-area overflow-y-auto">

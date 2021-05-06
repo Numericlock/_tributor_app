@@ -15,7 +15,7 @@
         <v-carousel class="post-carousel" :show-arrows="false" hide-delimiters v-if="post.attached_count == 1" height="auto">
             <v-carousel-item :src="postImageUrl+post.id+'_0.png'" @click="imageZoom(postImageUrl+post.id+'_0.png')"></v-carousel-item>
         </v-carousel>
-        <div class="post-icons">
+        <div class="post-icons" v-if="showIcons">
             <v-btn class="post-icons__reply" icon fab @click="reply()">
                 <v-icon>mdi-message-reply-text</v-icon>
                 <span v-show="post.comment_count">{{post.comment_count}}</span>
@@ -47,6 +47,9 @@
         props:{
             post:{
                 default:null
+            },
+            showIcons:{
+                default:true
             }
         },
         data: () => ({
@@ -87,8 +90,16 @@
             imageZoom(url) {
                 this.$emit('input', url)
             },
+            async openPostModal(){
+                const data = {
+                    isOpen: true,
+                    post: this.post,
+                }
+                await this.$store.dispatch('setIsPostModal', data)
+            },
             async reply(){
                 const id = this.post.id;
+                this.openPostModal();
             },
             async retribute(){
                 const data = {

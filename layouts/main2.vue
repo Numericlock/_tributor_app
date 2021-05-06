@@ -1,7 +1,5 @@
 <template>
     <v-app id="inspire">
-
-
         <v-main class="grey lighten-3">
             <v-container>
                 <v-row no-gutters>
@@ -19,7 +17,7 @@
                                     </v-btn>
                                 </v-list-item>
                             </v-list>
-                            <v-btn class="d-block text-center mx-auto" fab dark large color="cyan" @click.stop="isPostModal = true">
+                            <v-btn class="d-block text-center mx-auto" fab dark large color="cyan" @click.stop="openPostModal">
                                 <v-icon dark>
                                     mdi-pencil
                                 </v-icon>
@@ -56,7 +54,7 @@
                     </v-col>
                 </v-row>
             </v-container>
-            <PostModal v-model="isPostModal" :zIndex="10000" />
+            <PostModal :zIndex="10000" @/>
             <ListPostModal v-model="isListPostModal" :zIndex="10000" />
         </v-main>
     </v-app>
@@ -84,7 +82,7 @@
         },
         data: () => ({
             listIconUrl: 'http://localhost:8000/img/list_icon/',
-            isPostModal: false,
+            //isPostModal: false,
             isListPostModal: false,
             links: [{
                     name: 'Home',
@@ -128,10 +126,18 @@
             lists() {
                 //console.log("e?:"+this.$store.getters['list/list']);
                 return this.$store.getters['list/list']
+            },
+            isPostModal(){
+                return this.$store.getters['isPostModal'].isOpen
             }
         },
         methods: {
-
+            async openPostModal(){
+                const data = {
+                    isOpen: true,
+                }
+                await this.$store.dispatch('setIsPostModal', data)
+            }
         },
         async created() {
             const list = await this.$store.dispatch('list/fetchList')

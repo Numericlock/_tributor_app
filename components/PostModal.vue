@@ -1,17 +1,20 @@
 <template>
     <div class="wrapper">
         <transition name="first">
-            <ModalBackground :zIndex="zIndex" v-if="value" @click.native="modalAttention()"/>
+            <ModalBackground :zIndex="zIndex" v-if="isPostModal.isOpen" @click.native="modalAttention()"/>
         </transition>
         <!--<transition :name="firstModal">-->
         <transition name="first">
-            <div class="modal" v-if="modal && value" :style="{'z-index':zIndex}">
+            <div class="modal" v-if="modal && isPostModal.isOpen" :style="{'z-index':zIndex}">
                 <div class="modal-container">
                     <div class="modal-header">
                         <div>投稿</div>
                         <v-icon class="close-icon" @click="modalAttention">mdi-close</v-icon>
                     </div>
                     <v-divider class="my-2"></v-divider>
+                    <div class="parent-post" v-if="isPostModal.post">
+                        <Post v-model="selectedImage" :post="isPostModal.post" :showIcons='false'/>
+                    </div>
                     <div class="modal-content">
                         <div class="user-icon-area">
                             <v-avatar class="d-block text-center mx-auto" color="grey lighten-1" size="55">
@@ -49,7 +52,7 @@
         </transition>
         <!--<transition　:name="secondModal">-->
         <transition　name="first">
-            <div class="modal next-modal" v-if="firstModalNext && value" :style="{'z-index':zIndex}">
+            <div class="modal next-modal" v-if="firstModalNext && isPostModal.isOpen" :style="{'z-index':zIndex}">
                 <div class="modal-container next-modal-container">
                     <div class="modal-header next-modal-header">
                         <div>リストを選択</div>
@@ -97,12 +100,15 @@
             </div>
         </transition>
         <AttentionModal :zIndex="zIndex" text="内容が削除されます" @submit="modalRemove()" v-model="isAttention"/>
+        <ImageModal v-model="selectedImage"></ImageModal>
     </div>
 </template>
 
 <script>
     import ModalBackground from '~/components/ModalBackground.vue'
     import AttentionModal from '~/components/AttentionModal.vue'
+    import Post from '~/components/posts/Post.vue'
+    import ImageModal from '~/components/posts/ImageModal.vue'
     export default {
         props: {
             value: {
@@ -116,6 +122,7 @@
             return {
                 // postModal: true,
                 isPrivate: false,
+                userIconUrl: "http://localhost:8000/img/icon_img/",
                 listIconUrl: 'http://localhost:8000/img/list_icon/',
                 rules: [v => v.length <= 400 || 'Max 400 characters'],
                 textValue: '',
@@ -131,13 +138,19 @@
                 // firstModal:"first-next",
                 selectedImageUrl: null,
                 loadedImage: null,
+                selectedImage: null,
             }
         },
         components: {
             AttentionModal,
             ModalBackground,
+            Post,
+            ImageModal,
         },
         computed: {
+            isPostModal(){
+                return this.$store.getters['isPostModal']
+            },
             firstModal() {
                 let name = "first";
                 if (this.firstModalNext) name = "first-next";
@@ -173,10 +186,16 @@
                 }
             },
         },
-        // data: vm => ({}),
         methods: {
             handle(bool) {
                 this.$emit('input', bool)
+            },
+            async closePostModal(){
+                const data = {
+                    isOpen: false,
+                    post: null
+                }
+                await this.$store.dispatch('setIsPostModal', data)
             },
             nextModalValidate() {
                 if (this.inputValidate()) {
@@ -201,7 +220,8 @@
                 this.return_scroll();
                 this.selectedLists = [];
                 this.scroll = 0;
-                this.handle(false);
+                //this.handle(false);
+                this.closePostModal();
                 this.textValue = '';
             },
             inputValidate(){
@@ -224,6 +244,7 @@
                         attached_files: this.attachedFiles,
                         lists: this.selectedLists,
                     };
+                    if(this.isPostModal.post) data.parent_post_id = this.isPostModal.post.id;
                     await this.$store.dispatch('post/create', data)
                     this.modalRemove();
                 }
@@ -383,7 +404,7 @@
             }
         }
 
-        .modal-content {
+        .modal-content{
             display: flex;
             flex-direction: row;
 
@@ -549,46 +570,41 @@
             }
 
             input[type="checkbox"] {
-                display: none; // hide the system checkbox
-
-                // Let's add some effects after the checkbox is checked
-
+                display: none;
                 &:checked {
                     +label {
                         span {
                             background-color: #212226;
-                            transform: scale(1.25); // enlarge the box
+                            transform: scale(1.25);
 
                             &:after {
                                 width: 10px;
                                 background: #1790b5;
-                                transition: width 150ms ease 100ms; // enlarge the tick
+                                transition: width 150ms ease 100ms;
                             }
 
                             &:before {
                                 width: 5px;
                                 background: #1790b5;
-                                transition: width 150ms ease 100ms; // enlarge the tick
+                                transition: width 150ms ease 100ms;
                             }
                         }
 
                         &:hover {
-
-                            // copy the states for onMouseOver to avoid flickering
                             span {
                                 background-color: #212226;
-                                transform: scale(1.25); // enlarge the box
+                                transform: scale(1.25); 
 
                                 &:after {
                                     width: 10px;
                                     background: #1790b5;
-                                    transition: width 150ms ease 100ms; // enlarge the tick
+                                    transition: width 150ms ease 100ms;
                                 }
 
                                 &:before {
                                     width: 5px;
                                     background: #1790b5;
-                                    transition: width 150ms ease 100ms; // enlarge the tick
+                                    transition: width 150ms ease 100ms;
                                 }
                             }
                         }
