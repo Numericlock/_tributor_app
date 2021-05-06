@@ -13,7 +13,7 @@
                 </v-btn>
             </div>
             <div class="user-icon-container" v-if="list.users">
-                <v-avatar size="45" class="mr-1" v-for="user in listUsers(list.users)">
+                <v-avatar size="45" class="mr-1" v-for="(user, index) in listUsers(list.users)" :key="index">
                     <img alt="Avatar" class="user-icon" :src="userIconUrl+user+'.png'" />
                 </v-avatar> 
             </div>
@@ -55,7 +55,6 @@
         },
         methods: {
             imageZoom(url) {
-                console.log(url);
                 this.selectedImage = url;
             },
             async getBeforePosts() {

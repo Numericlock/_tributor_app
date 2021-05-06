@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-lazy v-for="(post, index) in posts">
+        <v-lazy v-for="(post, index) in posts" :key="index">
             <Post v-model="selectedImage" :post="post"/>
         </v-lazy>
         <ImageModal v-model="selectedImage"></ImageModal>
