@@ -12,34 +12,50 @@
                         <v-icon class="close-icon" @click="modalAttention">mdi-close</v-icon>
                     </div>
                     <v-divider class="my-2"></v-divider>
-                    <div class="parent-post" v-if="isPostModal.post">
-                        <Post v-model="selectedImage" :post="isPostModal.post" :showIcons='false'/>
-                    </div>
-                    <div class="modal-content">
-                        <div class="user-icon-area">
-                            <v-avatar class="d-block text-center mx-auto" color="grey lighten-1" size="55">
-                                
-                            </v-avatar>
+                    <div class="content-wrapper overflow-y-auto">
+                        <div class="parent-post" v-if="isPostModal.post">
+                            <div class="user-wrapper">
+                                <v-avatar class="d-block text-center" color="grey lighten-1" size=55>
+                                    <img alt="Avatar" class="user-icon" :src="userIconUrl+isPostModal.post.post_user_id+'.png'" />
+                                </v-avatar>
+                                <div class="text-xl-h6 text-lg-h6 text-md-body-1 text-sm-body-2 text-caption font-weight-bold my-auto ml-4">{{ isPostModal.post.users_name }}</div>
+                            </div>
+                            <div class="text-wrapper">
+                                <p>
+                                    {{isPostModal.post.content_text}}
+                                    <span v-for="n of isPostModal.post.attached_count" :key="n" >{{postImageUrl+isPostModal.post.id+'_'+ (n-1) +'.png'}}</span>
+                                </p>
+                            </div>
+                            <div class="image-wrapper">
+                                <img v-for="n of isPostModal.post.attached_count" :key="n" :src="postImageUrl+isPostModal.post.id+'_'+ (n-1) +'.png'" @click.stop="setSelectedImage(isPostModal.post.id,n)"/>
+                            </div>
                         </div>
-                        <div class="input-area">
-                            <v-textarea counter label="_tribute" no-resize :rules="rules" v-model="textValue" maxlength="400"></v-textarea>
-                            <div class="input-images my-3" v-if="attachedFiles.length != 0">
-                                <div class="images-wrapper mr-1">
-                                    <div v-for="{file , key} in attachedFrontOrBackFiles(true)" class="mb-1">
-                                        <v-icon class="close-icon" color="white" @click="removeImage(key)">mdi-close</v-icon>
-                                        <img :src="file" />
+                        <div class="modal-content">
+                            <div class="user-icon-area">
+                                <v-avatar class="d-block text-center mx-auto" color="grey lighten-1" size="55">
+
+                                </v-avatar>
+                            </div>
+                            <div class="input-area">
+                                <v-textarea counter label="_tribute" no-resize :rules="rules" v-model="textValue" maxlength="400"></v-textarea>
+                                <div class="input-images my-3" v-if="attachedFiles.length != 0">
+                                    <div class="images-wrapper mr-1">
+                                        <div v-for="{file , key} in attachedFrontOrBackFiles(true)" class="mb-1">
+                                            <v-icon class="close-icon" color="white" @click="removeImage(key)">mdi-close</v-icon>
+                                            <img :src="file" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="images-wrapper">
-                                    <div v-for="{file , key} in attachedFrontOrBackFiles(false)" class="mb-1">
-                                        <v-icon class="close-icon" color="white" @click="removeImage(key)">mdi-close</v-icon>
-                                        <img :src="file" />
+                                    <div class="images-wrapper">
+                                        <div v-for="{file , key} in attachedFrontOrBackFiles(false)" class="mb-1">
+                                            <v-icon class="close-icon" color="white" @click="removeImage(key)">mdi-close</v-icon>
+                                            <img :src="file" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <v-divider class="my-2"></v-divider>
                         </div>
                     </div>
+                    <v-divider class="my-2"></v-divider>
                     <div class="modal-footer">
                         <label for="image_file_input" class="my-auto">
                             <v-icon class="image-icon">mdi-image-plus</v-icon>
@@ -124,6 +140,7 @@
                 isPrivate: false,
                 userIconUrl: "http://localhost:8000/img/icon_img/",
                 listIconUrl: 'http://localhost:8000/img/list_icon/',
+                postImageUrl: "http://localhost:8000/img/post_img/",
                 rules: [v => v.length <= 400 || 'Max 400 characters'],
                 textValue: '',
                 modal: true,
@@ -271,6 +288,9 @@
             removeImage(index){
                 this.attachedFiles.splice(index,1);
             },
+            setSelectedImage(post_id,index){
+                this.selectedImage =  this.postImageUrl+post_id+'_'+ (index-1) +'.png';
+            },
             no_scroll() {
                 // PCでのスクロール禁止
                 document.addEventListener("mousewheel", this.scroll_control, {
@@ -403,52 +423,75 @@
                 top: 0;
             }
         }
-
-        .modal-content{
-            display: flex;
-            flex-direction: row;
-
-            .user-icon-area {
-                min-width: 80px;
-                padding: 5px 10px;
-                padding-left:0;
-            }
-
-            .input-area {
-                width: 100%;
+        .content-wrapper{
+            .parent-post{
                 display: flex;
                 flex-direction: column;
-
-                .input-images {
+                margin-left:7.5px;
+                .user-wrapper {
                     display: flex;
+                }
+                .text-wrapper{
+                    text-align: left;
+                    word-wrap: break-word;
+                }
+                .image-wrapper{
+                    display:flex;
                     flex-direction: row;
-                    width: 100%;
+                    justify-content: space-around;
+                    img{
+                        max-height: 80px;
+                        max-width: 80px;
+                        border-radius: 15%;
 
-                    .images-wrapper {
+                    }
+                }
+            }
+            .modal-content{
+                display: flex;
+                flex-direction: row;
+
+                .user-icon-area {
+                    min-width: 80px;
+                    padding: 5px 10px;
+                    padding-left:0;
+                }
+
+                .input-area {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+
+                    .input-images {
                         display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-                        max-width: 50%;
-                        div{
-                            position: relative;
-                            height:100%;
-                            .close-icon{
-                                position: absolute;
-                                top:10px;
-                                right:10px;
-                            }
-                            img {
-                                width: 100%;
-                                height: 100%;
-                                wobject-fit: cover;
-                                border-radius: 15px;
+                        flex-direction: row;
+                        width: 100%;
+
+                        .images-wrapper {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            max-width: 50%;
+                            div{
+                                position: relative;
+                                height:100%;
+                                .close-icon{
+                                    position: absolute;
+                                    top:10px;
+                                    right:10px;
+                                }
+                                img {
+                                    width: 100%;
+                                    height: 100%;
+                                    wobject-fit: cover;
+                                    border-radius: 15px;
+                                }
                             }
                         }
                     }
                 }
-            }
+            }   
         }
-
         .modal-footer {
             display: flex;
             justify-content: space-between;

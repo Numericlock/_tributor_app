@@ -1,12 +1,13 @@
 <template>
-    <div class="post-container">
-        <div class="user-wrapper">
+    <div class="post-container" @click.self="toDetail(post.id)">
+        <div class="user-wrapper" @click.self="toDetail(post.id)">
             <v-avatar class="d-block text-center" color="grey lighten-1" size=55>
                 <img alt="Avatar" class="user-icon" :src="userIconUrl+post.post_user_id+'.png'" />
             </v-avatar>
-            <div class="text-xl-h6 text-lg-h6 text-md-body-1 text-sm-body-2 text-caption font-weight-bold my-auto ml-4">{{ post.users_name }}</div>
+            <div class="user-name text-xl-h6 text-lg-h6 text-md-body-1 text-sm-body-2 text-caption font-weight-bold my-auto ml-4">{{ post.users_name }}</div>
+            {{post}}
         </div>
-        <div class="text-wrapper">
+        <div class="text-wrapper" @click.self="toDetail(post.id)">
             <p>{{post.content_text}}</p>
         </div>
         <v-carousel class="post-carousel" hide-delimiters v-if="post.attached_count > 1" height="500px">
@@ -15,7 +16,7 @@
         <v-carousel class="post-carousel" :show-arrows="false" hide-delimiters v-if="post.attached_count == 1" height="auto">
             <v-carousel-item :src="postImageUrl+post.id+'_0.png'" @click="imageZoom(postImageUrl+post.id+'_0.png')"></v-carousel-item>
         </v-carousel>
-        <div class="post-icons" v-if="showIcons">
+        <div class="post-icons" @click.self="toDetail(post.id)">
             <v-btn class="post-icons__reply" icon fab @click="reply()">
                 <v-icon>mdi-message-reply-text</v-icon>
                 <span v-show="post.comment_count">{{post.comment_count}}</span>
@@ -47,9 +48,6 @@
         props:{
             post:{
                 default:null
-            },
-            showIcons:{
-                default:true
             }
         },
         data: () => ({
@@ -143,6 +141,10 @@
                 this.localIsLike = false;
                 
             },
+            toDetail(id){
+                console.log('クリック'+id);
+                this.$router.push({ path: `/post/${id}`})
+            }
         }
     }
 </script>
@@ -167,6 +169,10 @@
 
         .user-wrapper {
             display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            .user-name{
+            }
         }
     }
 
