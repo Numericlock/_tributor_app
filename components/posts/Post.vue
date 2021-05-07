@@ -5,7 +5,6 @@
                 <img alt="Avatar" class="user-icon" :src="userIconUrl+post.post_user_id+'.png'" />
             </v-avatar>
             <div class="user-name text-xl-h6 text-lg-h6 text-md-body-1 text-sm-body-2 text-caption font-weight-bold my-auto ml-4">{{ post.users_name }}</div>
-            {{post}}
         </div>
         <div class="text-wrapper" @click.self="toDetail(post.id)">
             <p>{{post.content_text}}</p>
