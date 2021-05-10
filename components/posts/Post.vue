@@ -141,7 +141,6 @@
                 
             },
             toDetail(id){
-                console.log('クリック'+id);
                 this.$router.push({ path: `/post/${id}`})
             }
         }

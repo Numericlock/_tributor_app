@@ -1,7 +1,9 @@
 <template>
     <div class="list px-8">
-        <Post v-model="selectedImage" :post="post" />
-        {{post.id}}
+        <Post v-model="selectedImage" :post="post.post" v-if="post.length != 0" />
+        <v-divider class="my-2"></v-divider>
+        <Post v-model="selectedImage" v-for="(child, index) in post.child_posts" :key="index" :post="child" v-if="post.length != 0" />
+        <ImageModal v-model="selectedImage"></ImageModal>
         <AttentionModal text="リストを削除しますか？" v-model="isAttention" />
     </div>
 </template>
@@ -12,30 +14,30 @@
     export default {
         layout: 'main2',
         async fetch({
-            store,route
+            store,
+            route
         }) {
-         //   console.log(route.params.id);
-         //   const data = {
-         //       id:route.params.id
-         //   };
-         //   console.log(data);
-         //   const list = await store.dispatch('list/read', data);
+            //   console.log(route.params.id);
+            //   const data = {
+            //       id:route.params.id
+            //   };
+            //   console.log(data);
+            //   const list = await store.dispatch('list/read', data);
         },
         props: {
             list: {
-                default:-1,
+                default: -1,
             },
         },
         data() {
             return {
                 post: [],
-                isPostPage:true,
+                isPostPage: true,
                 userIconUrl: "http://localhost:8000/img/icon_img/",
                 userErrorIcon: "default.png",
                 listIconUrl: 'http://localhost:8000/img/list_icon/',
-                
                 isAttention: false,
-                selectedImage:null,
+                selectedImage: null,
             }
         },
         components: {
@@ -43,25 +45,23 @@
             ImageModal,
             AttentionModal,
         },
-        computed:{
+        computed: {
             id() {
                 return this.$route.params.id;
             }
         },
         methods: {
-            async getData(){
+            async getData() {
                 const data = {
-                    id:this.id
+                    id: this.id
                 };
-                console.log(data);
-                this.post = await this.$store.dispatch('post/read', data);  
-                console.log(this.post);
+                this.post = await this.$store.dispatch('post/read', data);
             },
-            imgUrlAlt(event){
-                event.target.src = this.userIconUrl+this.userErrorIcon;
+            imgUrlAlt(event) {
+                event.target.src = this.userIconUrl + this.userErrorIcon;
             }
         },
-        created(){
+        created() {
             this.getData();
         }
     }
@@ -90,14 +90,16 @@
             display: flex;
             flex-direction: column;
         }
-        
+
         &__users {
             display: flex;
             flex-direction: column;
-            .user-container{
+
+            .user-container {
                 display: flex;
-                flex-direction: row; 
-                .wrapper{
+                flex-direction: row;
+
+                .wrapper {
                     display: flex;
                     flex-direction: column;
                 }
