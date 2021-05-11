@@ -1,3 +1,4 @@
+import $cookies from "cookie-universal-nuxt";
 export const state = () => ({
     list: []
 })
@@ -33,6 +34,9 @@ export const mutations = {
 
 export const actions = {
     async fetchList() {
+        const token = this.$cookies.get('_tributor_api_token');
+        console.log(token);
+        this.$axios.defaults.headers.common['Authorization'] = "Bearer " + token;
         return await this.$axios.$get('/post')
             .catch(err => {
                 console.log(err)

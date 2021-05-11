@@ -69,7 +69,7 @@ export const mutations = {
 
 export const actions = {
     async fetchList() {
-        return await this.$axios.$get('/home')
+        return await this.$axios.$post('/home')
             .catch(err => {
                 console.log(err)
             })

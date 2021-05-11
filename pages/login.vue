@@ -2,42 +2,33 @@
     <div class="container">
         <h1 class="display-1 mt-5">ログイン</h1>
         <v-form @submit.prevent="submit">
-            <v-text-field 
-                label="メールアドレス" 
-                v-model="email" 
-                outlined 
-            />
-            <v-text-field 
-                type="password" 
-                label="パスワード" 
-                v-model="password" 
-                outlined 
-            />
+            <v-text-field label="メールアドレス" v-model="email" outlined />
+            <v-text-field type="password" label="パスワード" v-model="password" outlined />
             <v-btn type="submit" class="info">ログイン</v-btn>
         </v-form>
     </div>
 </template>
 
 <script>
-export default {
-  middleware: 'logined_user',
-  layout: 'beforeAuthPage',
-  data () {
-    return {
-      email: '',
-      password: ''
+    export default {
+        // middleware: 'logined_user',
+        layout: 'beforeAuthPage',
+        data() {
+            return {
+                email: '',
+                password: ''
+            }
+        },
+        methods: {
+            async submit() {
+                await this.$store.dispatch('authentication/login', {
+                    email: this.email,
+                    password: this.password
+                })
+                //this.$router.push('/home');
+            }
+        }
     }
-  },
-  methods: {
-    async submit () {
-      await this.$store.dispatch('auth/login', {
-        email: this.email,
-        password: this.password
-      })
-      this.$router.push('/home');
-    }
-  }
-}
 </script>
 
 <style lang="scss" scoped>

@@ -50,7 +50,7 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/proxy',
     '@nuxtjs/dotenv',
-    ['cookie-universal-nuxt', { parseJSON: false }],
+    'cookie-universal-nuxt',
   ],
   proxy: {
     '/api': (environment === 'development') ? 'http://localhost:8000' : 'https://api.example.com'
