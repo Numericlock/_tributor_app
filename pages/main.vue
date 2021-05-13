@@ -65,9 +65,10 @@
             async setUser(){
                 const data = {
                     name:"hishida_passport",
-                    email:"tatsuki1@live.jp",
+                    email:"tatsuki2@live.jp",
                     password:"hishida1430",
                     c_password:"hishida1430",
+                    user_id:"aa"
                 }
                 const response = await this.$axios.$post('http://localhost:8000/api/register',data)
                     .catch(err => {

@@ -26,10 +26,11 @@ export const actions = {
             })
         console.log(response);
         const token = response.success.token;
-        dispatch('authentication', token)
+        if(token) return dispatch('authentication', token);
+        else return false;
     },
     async register({
-        commit
+        commit,dispatch
     }, data) {
         const response = await this.$axios.$post('http://localhost:8000/api/register', data)
             .catch(err => {
@@ -37,7 +38,8 @@ export const actions = {
             })
         console.log(response);
         const token = response.success.token;
-        dispatch('authentication', token)
+        if(token) return dispatch('authentication', token);
+        else return false;
     },
     async authentication({
         commit
@@ -52,11 +54,9 @@ export const actions = {
         }).catch(err => {
             console.log(err)
         })
-        console.log(response);
         if(response.success) this.$cookies.set('_tributor_api_token', token);
-        console.log(this.$cookies.get('_tributor_api_token'));
         commit('setUser', response)
-        
+        return response;
     },
 
 }

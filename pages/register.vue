@@ -114,16 +114,16 @@
                         <div class="input-wrapper my-5">
                             <v-text-field label="表示名" v-model="name" :rules="[rules.required, rules.counter]" maxlength="14" counter outlined />
                             <v-text-field label="ユーザーID" v-model="userId" :rules="[rules.required, rules.counter]" counter maxlength="32" outlined />
-                            <v-dialog ref="dialog" v-model="modal" :return-value.sync="date" persistent width="290px">
+                            <v-dialog ref="dialog" v-model="modal" :return-value.sync="birthOn" persistent width="290px">
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-text-field v-model="date" label="誕生日" append-icon="mdi-calendar" readonly v-bind="attrs" v-on="on" outlined></v-text-field>
+                                    <v-text-field v-model="birthOn" label="誕生日" append-icon="mdi-calendar" readonly v-bind="attrs" v-on="on" outlined></v-text-field>
                                 </template>
-                                <v-date-picker v-model="date" locale="ja-JP" scrollable>
+                                <v-date-picker v-model="birthOn" locale="ja-JP" scrollable>
                                     <v-spacer></v-spacer>
                                     <v-btn text color="primary" @click="modal = false">
                                         Cancel
                                     </v-btn>
-                                    <v-btn text color="primary" @click="$refs.dialog.save(date)">
+                                    <v-btn text color="primary" @click="$refs.dialog.save(birthOn)">
                                         OK
                                     </v-btn>
                                 </v-date-picker>
@@ -141,7 +141,8 @@
                 </v-stepper-content>
 
                 <v-stepper-content step="3">
-                    <v-avatar color="grey lighten-1 my-auto" size="55" @mouseover="isIconHover = true" @mouseleave="isIconHover = false">
+                    <div class="d-flex justify-center">
+                    <v-avatar color="grey lighten-1 my-auto" size="250" @mouseover="isIconHover = true" @mouseleave="isIconHover = false">
                         <img :src="listIcon" v-if="listIcon" />
                         <v-icon color="white" v-else>mdi-image-plus</v-icon>
                         <transition name="first">
@@ -151,12 +152,15 @@
                             </label>
                         </transition>
                     </v-avatar>
-                    <v-btn @click="page = 2">
-                        戻る
-                    </v-btn>
-                    <v-btn color="primary" type="verify(3)">
-                        登録
-                    </v-btn>
+                    </div>
+                    <div class="d-flex justify-space-between">
+                        <v-btn @click="page = 2">
+                            戻る
+                        </v-btn>
+                        <v-btn color="primary" @click="verify(3)">
+                            登録
+                        </v-btn>
+                    </div>
                 </v-stepper-content>
             </v-stepper-items>
         </v-stepper>
@@ -170,7 +174,7 @@
         layout: 'beforeAuthPage',
         data() {
             return {
-                page: 3,
+                page: 1,
                 email: '',
                 name: '',
                 userId: '',
@@ -179,7 +183,8 @@
                 isIconInput:false,
                 isIconHover: false,
                 iconUrl: null,
-                date: new Date().toISOString().substr(0, 10),
+                listIcon:null,
+                birthOn: new Date().toISOString().substr(0, 10),
                 modal: false,
                 allowedExtensions: ['image/jpeg', 'image/png'],
                 rules: {
@@ -198,15 +203,19 @@
             CropperModal,
         },
         methods: {
-            verify(page) {
+            async verify(page) {
                 switch (page) {
                     case 1:
-                        if (this.$refs.page_one.validate()) this.page = 2;
+                        const count =  await this.emailExists(this.email);
+                        if (count == 0 && this.$refs.page_one.validate()) this.page = 2;
+                        else console.log("failed");
                         break;
                     case 2:
                         if (this.$refs.page_two.validate()) this.page = 3;
                         break;
                     case 3:
+                        if(this.$refs.page_one.validate() && this.$refs.page_two.validate()) this.submit();
+                        else console.log("failed");
                         break;
                 }
             },
@@ -224,13 +233,29 @@
                 }
                 reader.readAsDataURL(files[0])
             },
+            async emailExists(email){
+                const data = {
+                    email:email
+                };
+                const response = await this.$axios.$post('http://localhost:8000/api/exists/email', data)
+                    .catch(err => {
+                        console.log(err)
+                    })
+                console.log(response);
+                return Number(response);
+            },
             async submit() {
-                await this.$store.dispatch('auth/register', {
-                    email: this.email,
+                const response = await this.$store.dispatch('authentication/register', {
                     name: this.name,
-                    password: this.password
+                    email: this.email,
+                    password: this.password,
+                    c_password: this.cPassword,
+                    user_id: this.userId,
+                    birth_on: this.birthOn,
                 })
-                this.$router.push('/login');
+                console.log(response);
+                if(response) this.$router.push('/home');
+                else console.log("入力内容が不正です。");//this.$router.push('/login');
             }
         }
     }
@@ -261,7 +286,21 @@
                 font-size: 100px;
             }
         }
+        .hover-pencil {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 100%;
+            background: rgba(62, 62, 62, 0.50);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(5.0px);
+            -webkit-backdrop-filter: blur(5.0px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
 
+        .icon-input {
+            display: none;
+        }
         .control-buttons {
             display: flex;
             justify-content: space-around;
