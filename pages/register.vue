@@ -171,6 +171,7 @@
 <script>
     import CropperModal from '~/components/CropperModal.vue'
     export default {
+        middleware: 'logined_user',
         layout: 'beforeAuthPage',
         data() {
             return {

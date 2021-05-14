@@ -8,6 +8,7 @@
     import Posts from '~/components/posts/Posts.vue'
     import modal from '~/components/Modal.vue'
     export default {
+        middleware: 'not_logined_user',
         layout: 'main2',
         async fetch({
             store

@@ -1,6 +1,6 @@
 //import $cookies from "cookie-universal-nuxt";
 export const state = () => ({
-    user: []
+    user: null
 })
 
 export const getters = {
@@ -45,18 +45,20 @@ export const actions = {
         commit
     }, token) {
         console.log(token);
-        this.$axios.defaults.headers.common['Authorization'] = "Bearer " + token;
-        const response = await
-        this.$axios.$post('/details', {
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).catch(err => {
-            console.log(err)
-        })
-        if(response.success) this.$cookies.set('_tributor_api_token', token);
-        commit('setUser', response)
-        return response;
+        if(token){
+            this.$axios.defaults.headers.common['Authorization'] = "Bearer " + token;
+            const response = await
+            this.$axios.$post('/details', {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).catch(err => {
+                console.log(err)
+            })
+            if(response.success) this.$cookies.set('_tributor_api_token', token);
+            commit('setUser', response)
+            return response;
+        }else return false;
     },
 
 }
