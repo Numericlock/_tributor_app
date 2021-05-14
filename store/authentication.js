@@ -56,7 +56,7 @@ export const actions = {
                 console.log(err)
             })
             if(response.success) this.$cookies.set('_tributor_api_token', token);
-            commit('setUser', response)
+            commit('setUser', response.success)
             return response;
         }else return false;
     },

@@ -207,12 +207,14 @@
             async verify(page) {
                 switch (page) {
                     case 1:
-                        const count =  await this.emailExists(this.email);
-                        if (count == 0 && this.$refs.page_one.validate()) this.page = 2;
+                        const email_count = await this.emailExists(this.email);
+                        if (email_count == 0 && this.$refs.page_one.validate()) this.page = 2;
                         else console.log("failed");
                         break;
                     case 2:
-                        if (this.$refs.page_two.validate()) this.page = 3;
+                        const user_id_count = await this.userIdExists(this.userId);
+                        if (user_id_count == 0 && this.$refs.page_two.validate()) this.page = 3;
+                        else console.log("failed");
                         break;
                     case 3:
                         if(this.$refs.page_one.validate() && this.$refs.page_two.validate()) this.submit();
@@ -239,6 +241,17 @@
                     email:email
                 };
                 const response = await this.$axios.$post('http://localhost:8000/api/exists/email', data)
+                    .catch(err => {
+                        console.log(err)
+                    })
+                console.log(response);
+                return Number(response);
+            },            
+            async userIdExists(user_id){
+                const data = {
+                    user_id:user_id
+                };
+                const response = await this.$axios.$post('http://localhost:8000/api/exists/user_id', data)
                     .catch(err => {
                         console.log(err)
                     })
@@ -273,15 +286,6 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        color: #383838;
-        fill: #383838;
-        background: rgba(255, 255, 255, 0.25);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-
         .title-wrapper {
             .app-title {
                 font-size: 100px;
@@ -298,7 +302,19 @@
             -webkit-backdrop-filter: blur(5.0px);
             border: 1px solid rgba(255, 255, 255, 0.18);
         }
-
+        .v-stepper{
+            color: #383838;
+            fill: #383838;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .v-stepper__content, .v-stepper__items{
+            background:none;
+        }
         .icon-input {
             display: none;
         }

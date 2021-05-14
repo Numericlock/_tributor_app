@@ -1,5 +1,5 @@
 <template>
-    <div class="image-modal">
+    <div class="image-modal" v-show="value">
         <transition name="first">
             <div class="image-modal__background" v-if="value" @click.stop="handle(null)" :style="'backgroundImage:url('+ value +')'">
             </div>

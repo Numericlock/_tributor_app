@@ -5,7 +5,7 @@
         </transition>
         <!--<transition :name="firstModal">-->
         <transition name="first">
-            <div class="modal" v-if="modal && isPostModal.isOpen" :style="{'z-index':zIndex}">
+            <div class="modal" v-show="modal && isPostModal.isOpen" :style="{'z-index':zIndex}">
                 <div class="modal-container">
                     <div class="modal-header">
                         <div>投稿</div>
@@ -33,7 +33,7 @@
                         <div class="modal-content">
                             <div class="user-icon-area">
                                 <v-avatar class="d-block text-center mx-auto" color="grey lighten-1" size="55">
-
+                                    <img alt="Avatar" class="user-icon" :src="userIconUrl+user.id+'.png'" />
                                 </v-avatar>
                             </div>
                             <div class="input-area">
@@ -202,6 +202,10 @@
                     return result;
                 }
             },
+            user() {
+                console.log(this.$store.getters['authentication/user']);
+                return this.$store.getters['authentication/user']
+            }
         },
         methods: {
             handle(bool) {
