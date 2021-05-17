@@ -25,8 +25,9 @@ export const actions = {
                 console.log(err)
             })
         console.log(response);
-        const token = response.success.token;
-        if(token) return dispatch('authentication', token);
+        if(response){
+            return dispatch('authentication', response.success.token);
+        }
         else return false;
     },
     async register({
@@ -36,9 +37,9 @@ export const actions = {
             .catch(err => {
                 console.log(err)
             })
-        console.log(response);
-        const token = response.success.token;
-        if(token) return dispatch('authentication', token);
+        if(response){
+            return dispatch('authentication', response.success.token);
+        }
         else return false;
     },
     async authentication({

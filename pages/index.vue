@@ -43,15 +43,24 @@
             justify-content: space-around;
             margin-top: 10px;
             padding: 20px 30px;
-            background: rgba(62, 62, 62, 0.50);
+            color: #383838;
+            fill: #383838;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            /*background: rgba(62, 62, 62, 0.50);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
             backdrop-filter: blur(5.0px);
             -webkit-backdrop-filter: blur(5.0px);
             border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.18);*/
             .title-wrapper{
                 .app-title{
                     font-size:100px;
+                    white-space: nowrap;
                 }
             }
             .control-buttons{

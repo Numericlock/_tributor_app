@@ -1,6 +1,7 @@
 <template>
     <v-app>
-        <div class="toppage-wrapper">
+        <div class="top-page">
+            <Header></Header>
             <wave/>
             <v-main>
                 <v-container>
@@ -12,6 +13,7 @@
 </template>
 
 <script>
+    import Header from '~/components/Header.vue'
     import wave from '~/components/wave.vue'
     export default {
         data() {
@@ -22,12 +24,13 @@
             }
         },
         components: {
-            wave
+            Header,
+            wave,
         }
     }
 </script>
 <style lang='scss' scoped>
-    .toppage-wrapper{
+    .top-page{
         background:#36393E;
         overflow: hidden;
         height:100vh;

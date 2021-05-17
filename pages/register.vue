@@ -1,79 +1,5 @@
 <template>
     <div class="container">
-        <!--          <transition name="first">
-                <div　v-if="page == 1">
-                    <div class="input-wrapper" >
-                            <v-text-field 
-                                label="メールアドレス" 
-                                v-model="email" 
-                                :rules="[rules.required, rules.email]"
-                                outlined 
-                            />
-                            <v-text-field 
-                                type="password" 
-                                label="パスワード" 
-                                v-model="password" 
-                                :rules="[rules.required, rules.counter, rules.minCounter]"
-                                counter
-                                maxlength="32"
-                                outlined 
-                            />
-                    </div>
-                    <div class="control-buttons input-first">
-                        <v-btn @click="page++">次へ</v-btn>
-                    </div>
-                </div>
-            </transition>
-            <transition name="first">
-                <div　v-if="page == 2">
-                    <div class="input-wrapper" >
-                            <v-text-field 
-                                label="メールアドレス" 
-                                v-model="email" 
-                                :rules="[rules.required, rules.email]"
-                                outlined 
-                            />
-                            <v-text-field 
-                                type="password" 
-                                label="パスワード" 
-                                v-model="password" 
-                                :rules="[rules.required, rules.counter, rules.minCounter]"
-                                counter
-                                maxlength="32"
-                                outlined 
-                            />
-                    </div>
-                    <div class="control-buttons">
-                        <v-btn @click="page--">戻る</v-btn>
-                        <v-btn @click="page++">次へ</v-btn>
-                    </div>
-                </div>
-            </transition>
-            <transition name="first">
-                <div　v-if="page == 3">
-                    <div class="input-wrapper" v-if="page == 3">
-                            <v-text-field 
-                                label="メールアドレス" 
-                                v-model="email" 
-                                :rules="[rules.required, rules.email]"
-                                outlined 
-                            />
-                            <v-text-field 
-                                type="password" 
-                                label="パスワード" 
-                                v-model="password" 
-                                :rules="[rules.required, rules.counter, rules.minCounter]"
-                                counter
-                                maxlength="32"
-                                outlined 
-                            />
-                    </div>
-                    <div class="control-buttons">
-                        <v-btn @click="page--">戻る</v-btn>
-                        <v-btn type="submit" class="register">登録</v-btn>
-                    </div>
-                </div>
-            </transition> -->
         <v-stepper v-model="page">
             <v-stepper-header>
                 <v-stepper-step :complete="page > 1" step="1">
@@ -95,7 +21,7 @@
 
             <v-stepper-items>
                 <v-stepper-content step="1">
-                    <v-form ref="page_one">
+                    <v-form ref="step_first">
                         <div class="input-wrapper my-5">
                             <v-text-field label="メールアドレス" v-model="email" :rules="[rules.required, rules.email]" outlined />
                             <v-text-field type="password" label="パスワード" v-model="password" :rules="[rules.required, rules.counter, rules.minCounter]" counter maxlength="32" outlined />
@@ -110,7 +36,7 @@
                 </v-stepper-content>
 
                 <v-stepper-content step="2">
-                    <v-form ref="page_two">
+                    <v-form ref="step_second">
                         <div class="input-wrapper my-5">
                             <v-text-field label="表示名" v-model="name" :rules="[rules.required, rules.counter]" maxlength="14" counter outlined />
                             <v-text-field label="ユーザーID" v-model="userId" :rules="[rules.required, rules.counter]" counter maxlength="32" outlined />
@@ -208,16 +134,16 @@
                 switch (page) {
                     case 1:
                         const email_count = await this.emailExists(this.email);
-                        if (email_count == 0 && this.$refs.page_one.validate()) this.page = 2;
+                        if (email_count == 0 && this.$refs.step_first.validate()) this.page = 2;
                         else console.log("failed");
                         break;
                     case 2:
                         const user_id_count = await this.userIdExists(this.userId);
-                        if (user_id_count == 0 && this.$refs.page_two.validate()) this.page = 3;
+                        if (user_id_count == 0 && this.$refs.step_second.validate()) this.page = 3;
                         else console.log("failed");
                         break;
                     case 3:
-                        if(this.$refs.page_one.validate() && this.$refs.page_two.validate()) this.submit();
+                        if(this.$refs.step_first.validate() && this.$refs.step_second.validate()) this.submit();
                         else console.log("failed");
                         break;
                 }
