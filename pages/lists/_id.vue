@@ -43,6 +43,7 @@
 <script>
     import AttentionModal from '~/components/AttentionModal.vue'
     export default {
+        middleware: 'not_logined_user',
         layout: 'main2',
         async fetch({
             store,route

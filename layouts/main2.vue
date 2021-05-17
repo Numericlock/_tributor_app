@@ -116,7 +116,7 @@
                 },
                 {
                     name: 'Profile',
-                    link: '/main',
+                    link: '/profile',
                     icon: 'mdi-account',
                     current: false
                 },

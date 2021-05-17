@@ -24,6 +24,7 @@
 <script>
     import modal from '~/components/Modal.vue'
     export default {
+        middleware: 'not_logined_user',
         //middleware: 'not_logined_user',
         //layout: 'home',
 

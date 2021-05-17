@@ -18,7 +18,6 @@
 </template>
 
 <script>
-    //import wave from '~/components/wave.vue'
     export default {
         middleware: 'logined_user',
         layout: 'beforeAuthPage',
@@ -26,7 +25,6 @@
             return {}
         },
         components: {
-      //      wave
         }
     }
 </script>
