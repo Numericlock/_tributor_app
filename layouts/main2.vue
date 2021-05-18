@@ -3,7 +3,7 @@
         <v-main class="grey lighten-3">
             <v-container>
                 <v-row no-gutters>
-                    <v-col xl=2 lg=2 md=2 sm=2 cols=1>
+                    <v-col class="d-none d-sm-flex" xl=2 lg=2 md=2 sm=2 xs=2 cols=2>
                         <v-sheet min-height="97vh" min-width="90px">
                             <v-list shaped>
                                 <v-list-item v-for="(link, index) in links" :key="index" link router exact :to="link.link" class="my-5">
@@ -24,9 +24,24 @@
                             </v-btn>
                         </v-sheet>
                     </v-col>
+                    <v-navigation-drawer v-model="drawer" absolute bottom temporary>
+                        <v-list shaped>
+                            <v-list-item v-for="(link, index) in links" :key="index" link router exact :to="link.link" class="my-5">
+                                <v-list-item-content>
+                                    <v-list-item-title>{{ link.name }}</v-list-item-title>
+                                </v-list-item-content>
+                                <v-btn class="d-block text-center mx-auto" fab dark color="grey darken-1">
+                                    <v-icon dark>
+                                        {{ link.icon }}
+                                    </v-icon>
+                                </v-btn>
+                            </v-list-item>
+                        </v-list>
+                    </v-navigation-drawer>
 
-                    <v-col xl=6 lg=6 md=9 sm=10 cols=11>
+                    <v-col xl=6 lg=6 md=9 sm=10 xs=10 cols=12>
                         <v-sheet min-height="50px">
+                            <v-app-bar-nav-icon class="d-flex d-sm-none" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
                         </v-sheet>
                         <v-main>
                             <v-container class="py-0" fluid>
@@ -54,7 +69,7 @@
                     </v-col>
                 </v-row>
             </v-container>
-            <PostModal :zIndex="10000" @/>
+            <PostModal :zIndex="10000" @ />
             <ListPostModal v-model="isListPostModal" :zIndex="10000" />
         </v-main>
     </v-app>
@@ -84,6 +99,7 @@
             listIconUrl: 'http://localhost:8000/img/list_icon/',
             //isPostModal: false,
             isListPostModal: false,
+            drawer: false,
             links: [{
                     name: 'Home',
                     link: '/home',
@@ -127,12 +143,12 @@
                 //console.log("e?:"+this.$store.getters['list/list']);
                 return this.$store.getters['list/list']
             },
-            isPostModal(){
+            isPostModal() {
                 return this.$store.getters['isPostModal'].isOpen
             }
         },
         methods: {
-            async openPostModal(){
+            async openPostModal() {
                 const data = {
                     isOpen: true,
                 }

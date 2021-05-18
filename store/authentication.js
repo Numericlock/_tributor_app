@@ -45,7 +45,6 @@ export const actions = {
     async authentication({
         commit
     }, token) {
-        console.log(token);
         if(token){
             this.$axios.defaults.headers.common['Authorization'] = "Bearer " + token;
             const response = await
@@ -56,7 +55,8 @@ export const actions = {
             }).catch(err => {
                 console.log(err)
             })
-            if(response.success) this.$cookies.set('_tributor_api_token', token);
+            console.log(response.success);
+            if(response) this.$cookies.set('_tributor_api_token', token);
             commit('setUser', response.success)
             return response;
         }else return false;
