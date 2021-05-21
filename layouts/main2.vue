@@ -4,7 +4,7 @@
             <v-container>
                 <v-row no-gutters>
                     <v-col class="d-none d-sm-flex" xl=2 lg=2 md=2 sm=2 xs=2 cols=2>
-                        <v-sheet min-height="97vh" min-width="90px">
+                        <v-sheet min-height="97vh" max-height="97vh" min-width="90px" width="100%">
                             <v-list shaped>
                                 <v-list-item v-for="(link, index) in links" :key="index" link router exact :to="link.link" class="my-5">
                                     <v-list-item-content class="hidden-md-and-down">
@@ -180,7 +180,6 @@
         border-radius: 5px;
         background: #666;
     }
-
     .v-avatar {
         transition: all 0.2s;
         box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);

@@ -1,6 +1,6 @@
 <template>
     <div class="profile">
-        <div class="profile__header">
+        <div class="profile__header overflow-y-auto">
             <v-responsive :aspect-ratio="16/9">
                 <v-img src="https://picsum.photos/id/11/500/300">
 
@@ -20,7 +20,26 @@
         </div>
         <v-divider class="my-2"></v-divider>
         <div class="profile__tab">
-            <Tab :tabList="tabList" v-model="tab"></Tab>
+            <Tab :tabList="tabList" v-model="tab">
+                <template  v-slot:tribute>
+                    <section class="posts-wrapper overflow-y-auto" @scroll="getScrollParam" ref="postsWrapper">
+                        <Posts :posts = "posts"/>
+                    </section>
+                </template>
+                <template  v-slot:reply>
+                    <section class="posts-wrapper overflow-y-auto">
+                        <Posts :posts = "reply"/>
+                    </section>
+                </template>
+                <template  v-slot:media>
+                    <section class="posts-wrapper overflow-y-auto">
+                        <Posts :posts = "media"/>
+                    </section>
+                </template>
+                <template  v-slot:like>
+                    <p>like</p>
+                </template>
+            </Tab>
         </div>
         <div class="profile__timeline">
         </div>
@@ -29,6 +48,7 @@
 
 <script>
     import Tab from '~/components/tab.vue'
+    import Posts from '~/components/posts/Posts.vue'
     export default {
         middleware: 'not_logined_user',
         layout: 'main2',
@@ -46,15 +66,22 @@
         data() {
             return {
                 profile: [],
+                posts:[],
+                media:[],
+                reply:[],
                 tab: null,
-                tabList:['tribute','repry','media','like'],
+                tabList:['tribute','reply','media','like'],
                 userIconUrl: "http://localhost:8000/img/icon_img/",
                 userErrorIcon: "default.png",
                 listIconUrl: 'http://localhost:8000/img/list_icon/',
+                scroll:0,//スクロール量
+                BottomPosition:0,
+                postsWrapper:null,
             }
         },
         components: {
             Tab,
+            Posts,
         },
         computed: {
             id() {
@@ -67,17 +94,53 @@
                     user_id: this.id
                 };
                 const profile = await this.$store.dispatch('profile/read', data);
-                this.profile = profile.profile;
+                this.profile = profile;
+                this.posts = await this.$axios.$get('/profile/posts/'+data.user_id)            .catch(err => {
+                        console.log(err)
+                    });
+                console.log(this.posts);
+                this.media = await this.$axios.$get('/profile/media/'+data.user_id)            .catch(err => {
+                        console.log(err)
+                    });                
+                this.reply = await this.$axios.$get('/profile/reply/'+data.user_id)            .catch(err => {
+                        console.log(err)
+                    });
+                console.log(this.reply);
                 //this.listUsers = profile.list_users;
                 //this.usersCount = profile.count;
                 console.log(profile);
             },
             imgUrlAlt(event) {
                 event.target.src = this.userIconUrl + this.userErrorIcon;
-            }
+            },
+            getScrollParam:function(e){
+                this.scroll = e.target.scrollTop;
+                console.log(this.scroll);
+                console.log(this.getScrollBottom());
+                this.BottomPosition=this.getScrollBottom();
+                if( this.scroll > this.BottomPosition-(this.postsWrapper.offsetHeight*0.9)){
+                    console.log("bottomPos");
+                    this.getBeforePosts();
+                }else if(this.scroll < this.postsWrapper.offsetHeight*0.9){
+                    console.log("topPos");  
+                }
+            },
+            getScrollBottom(){
+                return this.postsWrapper.scrollHeight - this.postsWrapper.offsetHeight;
+            },
+            async getBeforePosts() {
+                var data = {
+                    num: this.last_post.post_at
+                };
+                await this.$store.dispatch('home/getBeforePosts', data)
+            },
         },
         created() {
             this.getData();
+        },
+        mounted(){
+            const dom = this.$refs.postsWrapper; 
+            this.postsWrapper  = this.$refs.postsWrapper; 
         }
     }
 </script>
@@ -86,7 +149,7 @@
     .profile {
         display: flex;
         flex-direction: column;
-
+        max-height:97vh !important;
         &__user {
             display: flex;
             width: 100%;
@@ -101,6 +164,11 @@
                 .name {}
 
                 .id {}
+            }
+        }
+        &__tab {
+            .posts-wrapper{
+                overflow-x:hidden; 
             }
         }
     }
