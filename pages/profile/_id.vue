@@ -37,7 +37,9 @@
                     </section>
                 </template>
                 <template  v-slot:like>
-                    <p>like</p>
+                    <section class="posts-wrapper overflow-y-auto">
+                        <Posts :posts = "like"/>
+                    </section>
                 </template>
             </Tab>
         </div>
@@ -69,6 +71,7 @@
                 posts:[],
                 media:[],
                 reply:[],
+                like:[],
                 tab: null,
                 tabList:['tribute','reply','media','like'],
                 userIconUrl: "http://localhost:8000/img/icon_img/",
@@ -105,7 +108,11 @@
                 this.reply = await this.$axios.$get('/profile/reply/'+data.user_id)            .catch(err => {
                         console.log(err)
                     });
-                console.log(this.reply);
+                console.log(this.reply);                
+                this.like = await this.$axios.$get('/profile/like/'+data.user_id)            .catch(err => {
+                        console.log(err)
+                    });
+                console.log(this.like);
                 //this.listUsers = profile.list_users;
                 //this.usersCount = profile.count;
                 console.log(profile);
