@@ -5,12 +5,6 @@
         async fetch({
             store,redirect
         }) {
-         //   console.log(route.params.id);
-         //   const data = {
-         //       id:route.params.id
-         //   };
-         //   console.log(data);
-         //   const list = await store.dispatch('list/read', data);
             const user = store.getters['authentication/user'];
             redirect('/profile/'+user.user_id);
         },
