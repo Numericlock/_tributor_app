@@ -11,7 +11,7 @@
 
 <script>
     export default {
-        // middleware: 'logined_user',
+        middleware: 'logined_user',
         layout: 'beforeAuthPage',
         data() {
             return {
@@ -21,11 +21,12 @@
         },
         methods: {
             async submit() {
-                await this.$store.dispatch('authentication/login', {
+                const response = await this.$store.dispatch('authentication/login', {
                     email: this.email,
                     password: this.password
                 })
-                //this.$router.push('/home');
+                if(response) this.$router.push('/home');
+                else console.log("入力内容が不正です。");
             }
         }
     }

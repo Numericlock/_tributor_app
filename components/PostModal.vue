@@ -5,7 +5,7 @@
         </transition>
         <!--<transition :name="firstModal">-->
         <transition name="first">
-            <div class="modal" v-if="modal && isPostModal.isOpen" :style="{'z-index':zIndex}">
+            <div class="modal" v-show="modal && isPostModal.isOpen" :style="{'z-index':zIndex}">
                 <div class="modal-container">
                     <div class="modal-header">
                         <div>投稿</div>
@@ -16,7 +16,7 @@
                         <div class="parent-post" v-if="isPostModal.post">
                             <div class="user-wrapper">
                                 <v-avatar class="d-block text-center" color="grey lighten-1" size=55>
-                                    <img alt="Avatar" class="user-icon" :src="userIconUrl+isPostModal.post.post_user_id+'.png'" />
+                                    <img alt="Avatar" class="user-icon" :src="userIconUrl+isPostModal.post.user_id+'.png'" />
                                 </v-avatar>
                                 <div class="text-xl-h6 text-lg-h6 text-md-body-1 text-sm-body-2 text-caption font-weight-bold my-auto ml-4">{{ isPostModal.post.users_name }}</div>
                             </div>
@@ -33,7 +33,7 @@
                         <div class="modal-content">
                             <div class="user-icon-area">
                                 <v-avatar class="d-block text-center mx-auto" color="grey lighten-1" size="55">
-
+                                    <img alt="Avatar" class="user-icon" :src="userIconUrl+user.user_id+'.png'" />
                                 </v-avatar>
                             </div>
                             <div class="input-area">
@@ -202,6 +202,9 @@
                     return result;
                 }
             },
+            user() {
+                return this.$store.getters['authentication/user']
+            }
         },
         methods: {
             handle(bool) {

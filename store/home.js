@@ -37,7 +37,6 @@ export const mutations = {
         Object.keys(data.posts).forEach(function (key) {
             obj[Number(last_post_key) + Number(key) + 1] = data.posts[key];
         });
-        
         //更新のためのゴミ処理　::TODO
         state.posts = {
             ...state.posts,

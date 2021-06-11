@@ -1,101 +1,22 @@
 <template>
     <div class="container">
-        <!--          <transition name="first">
-                <div　v-if="page == 1">
-                    <div class="input-wrapper" >
-                            <v-text-field 
-                                label="メールアドレス" 
-                                v-model="email" 
-                                :rules="[rules.required, rules.email]"
-                                outlined 
-                            />
-                            <v-text-field 
-                                type="password" 
-                                label="パスワード" 
-                                v-model="password" 
-                                :rules="[rules.required, rules.counter, rules.minCounter]"
-                                counter
-                                maxlength="32"
-                                outlined 
-                            />
-                    </div>
-                    <div class="control-buttons input-first">
-                        <v-btn @click="page++">次へ</v-btn>
-                    </div>
-                </div>
-            </transition>
-            <transition name="first">
-                <div　v-if="page == 2">
-                    <div class="input-wrapper" >
-                            <v-text-field 
-                                label="メールアドレス" 
-                                v-model="email" 
-                                :rules="[rules.required, rules.email]"
-                                outlined 
-                            />
-                            <v-text-field 
-                                type="password" 
-                                label="パスワード" 
-                                v-model="password" 
-                                :rules="[rules.required, rules.counter, rules.minCounter]"
-                                counter
-                                maxlength="32"
-                                outlined 
-                            />
-                    </div>
-                    <div class="control-buttons">
-                        <v-btn @click="page--">戻る</v-btn>
-                        <v-btn @click="page++">次へ</v-btn>
-                    </div>
-                </div>
-            </transition>
-            <transition name="first">
-                <div　v-if="page == 3">
-                    <div class="input-wrapper" v-if="page == 3">
-                            <v-text-field 
-                                label="メールアドレス" 
-                                v-model="email" 
-                                :rules="[rules.required, rules.email]"
-                                outlined 
-                            />
-                            <v-text-field 
-                                type="password" 
-                                label="パスワード" 
-                                v-model="password" 
-                                :rules="[rules.required, rules.counter, rules.minCounter]"
-                                counter
-                                maxlength="32"
-                                outlined 
-                            />
-                    </div>
-                    <div class="control-buttons">
-                        <v-btn @click="page--">戻る</v-btn>
-                        <v-btn type="submit" class="register">登録</v-btn>
-                    </div>
-                </div>
-            </transition> -->
         <v-stepper v-model="page">
             <v-stepper-header>
                 <v-stepper-step :complete="page > 1" step="1">
-                    Name of step 1
+                    認証設定
                 </v-stepper-step>
-
                 <v-divider></v-divider>
-
                 <v-stepper-step :complete="page > 2" step="2">
-                    Name of step 2
+                    ユーザー設定
                 </v-stepper-step>
-
                 <v-divider></v-divider>
-
                 <v-stepper-step step="3">
-                    Name of step 3
+                    アイコン設定
                 </v-stepper-step>
             </v-stepper-header>
-
             <v-stepper-items>
                 <v-stepper-content step="1">
-                    <v-form ref="page_one">
+                    <v-form ref="step_first">
                         <div class="input-wrapper my-5">
                             <v-text-field label="メールアドレス" v-model="email" :rules="[rules.required, rules.email]" outlined />
                             <v-text-field type="password" label="パスワード" v-model="password" :rules="[rules.required, rules.counter, rules.minCounter]" counter maxlength="32" outlined />
@@ -110,20 +31,20 @@
                 </v-stepper-content>
 
                 <v-stepper-content step="2">
-                    <v-form ref="page_two">
+                    <v-form ref="step_second">
                         <div class="input-wrapper my-5">
                             <v-text-field label="表示名" v-model="name" :rules="[rules.required, rules.counter]" maxlength="14" counter outlined />
                             <v-text-field label="ユーザーID" v-model="userId" :rules="[rules.required, rules.counter]" counter maxlength="32" outlined />
-                            <v-dialog ref="dialog" v-model="modal" :return-value.sync="date" persistent width="290px">
+                            <v-dialog ref="dialog" v-model="modal" :return-value.sync="birthOn" persistent width="290px">
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-text-field v-model="date" label="誕生日" append-icon="mdi-calendar" readonly v-bind="attrs" v-on="on" outlined></v-text-field>
+                                    <v-text-field v-model="birthOn" label="誕生日" append-icon="mdi-calendar" readonly v-bind="attrs" v-on="on" outlined></v-text-field>
                                 </template>
-                                <v-date-picker v-model="date" locale="ja-JP" scrollable>
+                                <v-date-picker v-model="birthOn" locale="ja-JP" scrollable>
                                     <v-spacer></v-spacer>
                                     <v-btn text color="primary" @click="modal = false">
                                         Cancel
                                     </v-btn>
-                                    <v-btn text color="primary" @click="$refs.dialog.save(date)">
+                                    <v-btn text color="primary" @click="$refs.dialog.save(birthOn)">
                                         OK
                                     </v-btn>
                                 </v-date-picker>
@@ -142,7 +63,7 @@
 
                 <v-stepper-content step="3">
                     <div class="d-flex justify-center">
-                    <v-avatar color="grey lighten-1 mb-5" size="250" @mouseover="isIconHover = true" @mouseleave="isIconHover = false">
+                    <v-avatar color="grey lighten-1 my-auto" size="250" @mouseover="isIconHover = true" @mouseleave="isIconHover = false">
                         <img :src="listIcon" v-if="listIcon" />
                         <v-icon color="white" v-else>mdi-image-plus</v-icon>
                         <transition name="first">
@@ -157,7 +78,7 @@
                         <v-btn @click="page = 2">
                             戻る
                         </v-btn>
-                        <v-btn color="primary" type="verify(3)">
+                        <v-btn color="primary" @click="verify(3)">
                             登録
                         </v-btn>
                     </div>
@@ -171,10 +92,11 @@
 <script>
     import CropperModal from '~/components/CropperModal.vue'
     export default {
+        middleware: 'logined_user',
         layout: 'beforeAuthPage',
         data() {
             return {
-                page: 3,
+                page: 1,
                 email: '',
                 name: '',
                 userId: '',
@@ -184,7 +106,7 @@
                 isIconHover: false,
                 iconUrl: null,
                 listIcon:null,
-                date: new Date().toISOString().substr(0, 10),
+                birthOn: new Date().toISOString().substr(0, 10),
                 modal: false,
                 allowedExtensions: ['image/jpeg', 'image/png'],
                 rules: {
@@ -203,15 +125,21 @@
             CropperModal,
         },
         methods: {
-            verify(page) {
+            async verify(page) {
                 switch (page) {
                     case 1:
-                        if (this.$refs.page_one.validate()) this.page = 2;
+                        const email_count = await this.emailExists(this.email);
+                        if (email_count == 0 && this.$refs.step_first.validate()) this.page = 2;
+                        else console.log("failed");
                         break;
                     case 2:
-                        if (this.$refs.page_two.validate()) this.page = 3;
+                        const user_id_count = await this.userIdExists(this.userId);
+                        if (user_id_count == 0 && this.$refs.step_second.validate()) this.page = 3;
+                        else console.log("failed");
                         break;
                     case 3:
+                        if(this.$refs.step_first.validate() && this.$refs.step_second.validate()) this.submit();
+                        else console.log("failed");
                         break;
                 }
             },
@@ -229,13 +157,40 @@
                 }
                 reader.readAsDataURL(files[0])
             },
+            async emailExists(email){
+                const data = {
+                    email:email
+                };
+                const response = await this.$axios.$post('http://localhost:8000/api/exists/email', data)
+                    .catch(err => {
+                        console.log(err)
+                    })
+                console.log(response);
+                return Number(response);
+            },            
+            async userIdExists(user_id){
+                const data = {
+                    user_id:user_id
+                };
+                const response = await this.$axios.$post('http://localhost:8000/api/exists/user_id', data)
+                    .catch(err => {
+                        console.log(err)
+                    })
+                console.log(response);
+                return Number(response);
+            },
             async submit() {
-                await this.$store.dispatch('auth/register', {
-                    email: this.email,
+                const response = await this.$store.dispatch('authentication/register', {
                     name: this.name,
-                    password: this.password
+                    email: this.email,
+                    password: this.password,
+                    c_password: this.cPassword,
+                    user_id: this.userId,
+                    birth_on: this.birthOn,
                 })
-                this.$router.push('/login');
+                console.log(response);
+                if(response) this.$router.push('/home');
+                else console.log("入力内容が不正です。");//this.$router.push('/login');
             }
         }
     }
@@ -252,15 +207,6 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        color: #383838;
-        fill: #383838;
-        background: rgba(255, 255, 255, 0.25);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-
         .title-wrapper {
             .app-title {
                 font-size: 100px;
@@ -277,7 +223,19 @@
             -webkit-backdrop-filter: blur(5.0px);
             border: 1px solid rgba(255, 255, 255, 0.18);
         }
-
+        .v-stepper{
+            color: #383838;
+            fill: #383838;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .v-stepper__content, .v-stepper__items{
+            background:none;
+        }
         .icon-input {
             display: none;
         }
