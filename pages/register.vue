@@ -141,7 +141,8 @@
                 </v-stepper-content>
 
                 <v-stepper-content step="3">
-                    <v-avatar color="grey lighten-1 my-auto" size="55" @mouseover="isIconHover = true" @mouseleave="isIconHover = false">
+                    <div class="d-flex justify-center">
+                    <v-avatar color="grey lighten-1 mb-5" size="250" @mouseover="isIconHover = true" @mouseleave="isIconHover = false">
                         <img :src="listIcon" v-if="listIcon" />
                         <v-icon color="white" v-else>mdi-image-plus</v-icon>
                         <transition name="first">
@@ -151,12 +152,15 @@
                             </label>
                         </transition>
                     </v-avatar>
-                    <v-btn @click="page = 2">
-                        戻る
-                    </v-btn>
-                    <v-btn color="primary" type="verify(3)">
-                        登録
-                    </v-btn>
+                    </div>
+                    <div class="d-flex justify-space-between">
+                        <v-btn @click="page = 2">
+                            戻る
+                        </v-btn>
+                        <v-btn color="primary" type="verify(3)">
+                            登録
+                        </v-btn>
+                    </div>
                 </v-stepper-content>
             </v-stepper-items>
         </v-stepper>
@@ -179,6 +183,7 @@
                 isIconInput:false,
                 isIconHover: false,
                 iconUrl: null,
+                listIcon:null,
                 date: new Date().toISOString().substr(0, 10),
                 modal: false,
                 allowedExtensions: ['image/jpeg', 'image/png'],
@@ -261,7 +266,21 @@
                 font-size: 100px;
             }
         }
+        .hover-pencil {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 100%;
+            background: rgba(62, 62, 62, 0.50);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(5.0px);
+            -webkit-backdrop-filter: blur(5.0px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
 
+        .icon-input {
+            display: none;
+        }
         .control-buttons {
             display: flex;
             justify-content: space-around;
